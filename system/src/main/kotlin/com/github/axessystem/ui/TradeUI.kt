@@ -1,8 +1,5 @@
 package com.github.axessystem.ui
 
-import com.github.axescode.core.trade.TradeDAO
-import com.github.axescode.core.trade.TradeItemVO
-import com.github.axescode.core.trade.TradeVO
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items
 import com.github.axescode.util.Items.isNullOrAir
@@ -13,7 +10,6 @@ import com.github.axessystem.`object`.trade.TradeState
 import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
-import com.github.axessystem.util.useOutputStream
 import io.github.monun.invfx.InvFX
 import io.github.monun.invfx.frame.InvFrame
 import kotlinx.coroutines.CoroutineStart
@@ -21,10 +17,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
-import java.util.*
 import kotlin.collections.HashMap
 
 object TradeUI {
@@ -126,10 +121,13 @@ object TradeUI {
                 viewer.tradeItems.forEach { viewer.playerData.playerEntity.sendMessage(it.toString()) }
             }
 
-            onClose {
-                info(it.reason.name)
+            onClose { e ->
+                info(e.reason.name)
                 when(tradeData.tradeState) {
-                    TradeState.PROCESSING -> return@onClose
+                    TradeState.PROCESSING -> {
+                        if(e.reason == InventoryCloseEvent.Reason.PLAYER)
+                            lazyRollback.start()
+                    }
                     TradeState.DENIED -> {
                         lazyRollback.start()
                     }
