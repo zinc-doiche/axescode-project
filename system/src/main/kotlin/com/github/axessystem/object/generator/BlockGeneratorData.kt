@@ -1,4 +1,4 @@
-package com.github.axessystem.generator
+package com.github.axessystem.`object`.generator
 
 import com.github.axessystem.plugin
 import com.github.axessystem.warn

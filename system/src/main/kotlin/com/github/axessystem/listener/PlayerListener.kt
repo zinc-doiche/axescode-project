@@ -3,8 +3,9 @@ package com.github.axessystem.listener
 import com.github.axescode.core.generator.PlacedGeneratorDAO
 import com.github.axescode.core.generator.PlacedGeneratorVO
 import com.github.axescode.util.Items
-import com.github.axessystem.generator.BlockGenerator
-import com.github.axessystem.generator.BlockGeneratorData
+import com.github.axessystem.`object`.generator.BlockGenerator
+import com.github.axessystem.`object`.generator.BlockGeneratorData
+import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.util.Placeable
 import com.github.axessystem.warn
 import org.bukkit.GameMode
@@ -13,9 +14,19 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 
 class PlayerListener: Listener {
+    companion object {
+        var trader: Trader? = null
+    }
+
+    @EventHandler
+    fun test(e: PlayerJoinEvent) {
+        trader = Trader(e.player)
+    }
+
     @EventHandler
     fun onPlace(e: BlockPlaceEvent) {
         if(!Items.hasPersistent(e.itemInHand, Placeable.placeableKey)) return

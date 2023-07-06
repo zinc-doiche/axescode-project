@@ -1,8 +1,8 @@
 package com.github.axessystem.listener
 
 import com.github.axescode.core.generator.PlacedGeneratorDAO
-import com.github.axessystem.generator.BlockGenerator
-import com.github.axessystem.generator.BlockGeneratorData
+import com.github.axessystem.`object`.generator.BlockGenerator
+import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.info
 import com.github.axessystem.plugin
 import org.apache.commons.lang3.tuple.MutablePair

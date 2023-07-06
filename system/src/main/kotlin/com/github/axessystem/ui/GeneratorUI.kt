@@ -2,7 +2,7 @@ package com.github.axessystem.ui
 
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.item
-import com.github.axessystem.generator.BlockGeneratorData
+import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.util.text
 import io.github.monun.invfx.InvFX
 import io.github.monun.invfx.frame.InvFrame
