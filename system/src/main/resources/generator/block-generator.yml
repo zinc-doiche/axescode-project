@@ -1,0 +1,8 @@
+example-generator:
+  drops:
+    COBBLESTONE: 4
+    DIAMOND: 1
+  display: STONE
+  cooldown:
+    ticks: 1000
+    display: COBBLESTONE

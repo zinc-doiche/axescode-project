@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.axescode.mybatis.mapper.PlacedGeneratorMapper">
+    <insert id="insert" keyProperty="placedGeneratorId" keyColumn="placed_generator_id" useGeneratedKeys="true">
+        INSERT INTO tbl_placed_generator
+        (placed_generator_name, placed_generator_world, placed_generator_x, placed_generator_y, placed_generator_z)
+        VALUES(#{placedGeneratorName}, #{placedGeneratorWorld}, #{placedGeneratorX}, #{placedGeneratorY}, #{placedGeneratorZ})
+    </insert>
+
+    <delete id="delete">
+        delete from tbl_placed_generator
+        where placed_generator_id = #{placedGeneratorId}
+    </delete>
+
+    <select id="selectAll" resultType="placedGeneratorVO">
+        SELECT placed_generator_id, placed_generator_name, placed_generator_world, placed_generator_x,
+               placed_generator_y, placed_generator_z
+        FROM tbl_placed_generator
+    </select>
+</mapper>

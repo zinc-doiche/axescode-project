@@ -1,0 +1,7 @@
+name: axescode
+version: '1.0-ALPHA'
+main: com.github.axescode.AxescodePlugin
+api-version: 1.19
+commands:
+  job:
+    description: job

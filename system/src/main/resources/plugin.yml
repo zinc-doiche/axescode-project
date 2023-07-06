@@ -1,0 +1,13 @@
+name: axes-system
+version: '1.0'
+main: com.github.axessystem.AxesSystem
+api-version: 1.19
+libraries:
+  - io.github.monun:tap-core:4.9.6
+  - io.github.monun:invfx-core:3.3.0
+  - io.github.monun:kommand-core:3.1.6
+  - io.github.monun:heartbeat-coroutines:0.0.5
+depend:
+  - axescode
+commands:
+
