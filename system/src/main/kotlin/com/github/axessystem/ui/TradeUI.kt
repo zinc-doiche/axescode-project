@@ -36,6 +36,7 @@ object TradeUI {
             meta.displayName(text(tradeData.requester.playerData.playerEntity.name).color(Colors.gold))
         }
 
+        //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
         val lazyRollback = pluginScope.launch(start = CoroutineStart.LAZY) {
             "거래가 취소되었습니다. 아이템을 회수합니다.".let {
                 tradeData.acceptor.playerData.playerEntity.sendMessage(it)
@@ -55,6 +56,7 @@ object TradeUI {
                 )
         }
 
+        //저장 시 서브루틴
         val lazySave = pluginScope.async(start = CoroutineStart.LAZY) {
             "거래 기록 저장 중...".let {
                 tradeData.acceptor.playerData.playerEntity.sendMessage(it)
@@ -86,6 +88,7 @@ object TradeUI {
             }
         }
 
+        //메인 프레임
         return InvFX.frame(6, text("거래").decoration(TextDecoration.BOLD, true)) {
             slot(2, 0) {item = acceptorHead}
             slot(6, 0) {item = requesterHead}
