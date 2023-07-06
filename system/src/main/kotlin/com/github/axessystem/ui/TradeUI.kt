@@ -122,6 +122,8 @@ object TradeUI {
                     else
                         e.currentItem!!.amount--
                 }
+
+                viewer.tradeItems.forEach { viewer.playerData.playerEntity.sendMessage(it.toString()) }
             }
 
             onClose {
