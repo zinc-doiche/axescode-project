@@ -1,32 +1,32 @@
 package com.github.axessystem
 
+import com.github.axescode.container.Containers
+import com.github.axescode.core.player.PlayerData
 import com.github.axescode.util.Items
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.listener.PlayerListener
 import com.github.axessystem.listener.ServerListener
+import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.ui.GeneratorUI
-import com.github.axessystem.ui.ItemsAdderBridge.setUI
-import com.github.axessystem.ui.TradeUI
-import com.github.axessystem.util.text
+import com.github.axessystem.util.useOutputStream
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
 import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.util.io.BukkitObjectOutputStream
+import java.io.ByteArrayOutputStream
+import java.util.*
 
 class AxesSystem: JavaPlugin() {
     override fun onEnable() {
@@ -47,43 +47,37 @@ class AxesSystem: JavaPlugin() {
 
         kommand {
         register("test") {
-            then("name" to string()) {
-                executes {
-                    val name: String by it
-                    player.openFrame(TradeUI.getFrame())
-                    player.setUI("", "axescode:$name")
+            executes {
+                useOutputStream { bs, os ->
+                    os.writeObject(ItemStack(Material.PAPER).serialize())
+                    val str = Base64.getEncoder().encodeToString(bs.toByteArray())
+                    info(str)
                 }
             }
         }
 
-        register("test2") {
-            executes {
-                PlayerListener.trader?.view() ?: kotlin.run { player.sendMessage("bb") }
+        register("trade") {
+            val traderArg = dynamic(StringType.SINGLE_WORD) { _, input ->
+                Trader(Containers.getPlayerDataContainer().getData(input).orElseThrow())
+            }.apply {
+                suggests { suggest(Containers.getPlayerDataContainer().all.map(PlayerData::getPlayerName)) }
             }
-        }
+            then("acceptor" to traderArg) {
+                then("requester" to traderArg) {
+                    executes {
+                        val acceptor: Trader by it
+                        val requester: Trader by it
 
-        register("test3") {
-            executes {
-                pluginScope.async {
-                    TradeUI.getFrame().let { frame ->
-                        player.openFrame(frame)
-                        frame.apply {
-                            var isCancelled = false
-                            onClose {
-                                isCancelled = true
-                            }
-                            repeat(9) { i ->
-                                if(isCancelled) return@repeat
-                                delay(1000)
-                                info(i)
-                                slot(0, 0) {
-                                    item = Items.item(Material.PAPER) {it.displayName(text(i.toString()))}
-                                }
-                            }
-                        }
+                        val data = TradeData(acceptor, requester)
+                        data.startTrade()
                     }
                 }
             }
+        }
+
+        register("axesdebug") {
+            requires { player.isOp }
+            executes { player.sendMessage(player.inventory.itemInMainHand.toString()) }
         }
 
         register("generator") {
@@ -93,9 +87,7 @@ class AxesSystem: JavaPlugin() {
                         if(it.generatorName == input) return@dynamic it
                     }
                 }.apply {
-                    suggests {
-                        suggest(BlockGenerator.allGenerators.map(BlockGenerator::generatorName))
-                    }
+                    suggests { suggest(BlockGenerator.allGenerators.map(BlockGenerator::generatorName)) }
                 }
                 then("generator" to generatorArgument) {
                     executes {
@@ -104,25 +96,17 @@ class AxesSystem: JavaPlugin() {
                     }
                 }
             }
-
             then("manage") {
-                executes {
-                    player.openFrame(GeneratorUI.get(player))
-                }
+                executes { player.openFrame(GeneratorUI.get(player)) }
             }
-
             then("display") {
-                requires {
-                    player.isOp
-                }
-
+                requires { player.isOp }
                 then("on") {
                     executes {
                         BlockGeneratorData.fakeServer.addPlayer(player)
                         BlockGeneratorData.fakeServer.update()
                     }
                 }
-
                 then("off") {
                     executes {
                         BlockGeneratorData.fakeServer.removePlayer(player)

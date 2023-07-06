@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -110,9 +111,10 @@ public class Items {
         else setItem(player, emptySlot, item);
     }
 
-    public static synchronized void addItem(Player player, ItemStack item) {
-        if(!player.getInventory().addItem(item).isEmpty())
-            player.getWorld().dropItem(player.getLocation(), item);
+    public static synchronized void addItem(Player player, ItemStack... items) {
+        if(!player.getInventory().addItem(items).isEmpty()) {
+            Arrays.stream(items).forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
+        }
     }
 
     public static boolean isFull(Inventory inventory) {
