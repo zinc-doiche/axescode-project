@@ -5,9 +5,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Trade {
+public class TradeItemVO {
+    private Long tradeItemId;
     private Long tradeId;
-    private Long accepterId;
-    private Long requesterId;
-    private String tradeDateTime;
+    private Long playerId;
+    //JSON
+    private String tradeItem;
 }

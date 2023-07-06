@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.axescode.mybatis.mapper.TradeMapper">
+    <insert id="insert" keyColumn="trade_id" keyProperty="tradeId" useGeneratedKeys="true">
+        insert into tbl_trade (trade_acceptor_id, trade_requester_id, trade_acceptor_sent_money, trade_requester_sent_money)
+        values (#{tradeAcceptorId}, #{tradeRequesterId}, #{tradeAcceptorSentMoney}, #{tradeRequesterSentMoney})
+    </insert>
+
+    <insert id="insertItem">
+        insert into tbl_trade_item (trade_id, player_id, trade_item)
+        values (#{tradeId}, #{playerId}, #{tradeItem})
+    </insert>
+</mapper>

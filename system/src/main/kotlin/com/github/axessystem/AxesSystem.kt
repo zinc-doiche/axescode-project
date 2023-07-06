@@ -1,11 +1,15 @@
 package com.github.axessystem
 
 import com.github.axescode.util.Items
-import com.github.axessystem.generator.BlockGenerator
-import com.github.axessystem.generator.BlockGeneratorData
+import com.github.axessystem.`object`.generator.BlockGenerator
+import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.listener.PlayerListener
 import com.github.axessystem.listener.ServerListener
+import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.ui.GeneratorUI
+import com.github.axessystem.ui.ItemsAdderBridge.setUI
+import com.github.axessystem.ui.TradeUI
+import com.github.axessystem.util.text
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
@@ -13,12 +17,15 @@ import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
-import org.bukkit.entity.BlockDisplay
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class AxesSystem: JavaPlugin() {
@@ -39,6 +46,46 @@ class AxesSystem: JavaPlugin() {
         )
 
         kommand {
+        register("test") {
+            then("name" to string()) {
+                executes {
+                    val name: String by it
+                    player.openFrame(TradeUI.getFrame())
+                    player.setUI("", "axescode:$name")
+                }
+            }
+        }
+
+        register("test2") {
+            executes {
+                PlayerListener.trader?.view() ?: kotlin.run { player.sendMessage("bb") }
+            }
+        }
+
+        register("test3") {
+            executes {
+                pluginScope.async {
+                    TradeUI.getFrame().let { frame ->
+                        player.openFrame(frame)
+                        frame.apply {
+                            var isCancelled = false
+                            onClose {
+                                isCancelled = true
+                            }
+                            repeat(9) { i ->
+                                if(isCancelled) return@repeat
+                                delay(1000)
+                                info(i)
+                                slot(0, 0) {
+                                    item = Items.item(Material.PAPER) {it.displayName(text(i.toString()))}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         register("generator") {
             then("get") {
                 val generatorArgument = dynamic(StringType.SINGLE_WORD) { _, input ->
@@ -65,7 +112,9 @@ class AxesSystem: JavaPlugin() {
             }
 
             then("display") {
-                requires { player.isOp }
+                requires {
+                    player.isOp
+                }
 
                 then("on") {
                     executes {
