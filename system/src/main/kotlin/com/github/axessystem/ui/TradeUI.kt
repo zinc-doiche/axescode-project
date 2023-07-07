@@ -26,12 +26,20 @@ class TradeUI(
     private val tradeData: TradeData,
     private val viewer: Trader
 ): UI {
-    private val info: ItemStack = getCustomItem(Material.PAPER, text("도움말"), 10002) { meta ->
-        meta.lore(texts("", "SHIFT+클릭: 세트 단위로 등록", "클릭: 1개 단위로 등록"))
+    private val info: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
+        meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록", "   - 클릭 : 1개 단위로 등록"))
     }
 
-    private val cancel: ItemStack = getCustomItem(Material.PAPER, text("나가기").color(Colors.red), 10003) { meta ->
-        meta.lore(texts("거래를 종료합니다."))
+    private val cancel: ItemStack = getCustomItem(Material.PAPER, text("나가기").color(Colors.red).decoration(TextDecoration.BOLD, true), 10003) { meta ->
+        meta.lore(texts("", "거래를 종료합니다."))
+    }
+
+    private val confirm: ItemStack = getCustomItem(Material.PAPER, text("아이템 확정").decoration(TextDecoration.BOLD, true), 10004) { meta ->
+        meta.lore(texts("", "거래 품목을 확정합니다.", "이후 품목을 바꿀 수 없습니다."))
+    }
+
+    private val trade: ItemStack = getCustomItem(Material.PAPER, text("거래 완료").decoration(TextDecoration.BOLD, true), 10004) { meta ->
+        meta.lore(texts("", "거래를 완료합니다."))
     }
 
     private val acceptorHead: ItemStack = item(Material.PLAYER_HEAD) { meta ->
@@ -49,18 +57,8 @@ class TradeUI(
     //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
     private val lazyRollback: Job = pluginScope.launch(start = CoroutineStart.LAZY) {
         tradeData.sendMessageAll("거래가 취소되었습니다. 아이템을 회수합니다.")
-
-        if(!tradeData.acceptor.tradeItems.isEmpty)
-            addItem(
-                tradeData.acceptor.player,
-                *tradeData.acceptor.tradeItems.toList().toTypedArray()
-            )
-
-        if(!tradeData.requester.tradeItems.isEmpty)
-            addItem(
-                tradeData.requester.player,
-                *tradeData.requester.tradeItems.toList().toTypedArray()
-            )
+        addItem(tradeData.acceptor.player, *tradeData.acceptor.getItems)
+        addItem(tradeData.requester.player, *tradeData.requester.getItems)
     }
 
     //저장 시 서브루틴
@@ -69,17 +67,8 @@ class TradeUI(
         tradeData.saveData()
 
         tradeData.sendMessageAll("거래 진행 중...")
-        if(!tradeData.acceptor.tradeItems.isEmpty)
-            addItem(
-                tradeData.requester.player,
-                *tradeData.acceptor.tradeItems.toList().toTypedArray()
-            )
-
-        if(!tradeData.requester.tradeItems.isEmpty)
-            addItem(
-                tradeData.acceptor.player,
-                *tradeData.requester.tradeItems.toList().toTypedArray()
-            )
+        addItem(tradeData.requester.player, *tradeData.acceptor.getItems)
+        addItem(tradeData.acceptor.player, *tradeData.requester.getItems)
 
         tradeData.sendMessageAll("거래 완료!")
     }
@@ -87,6 +76,14 @@ class TradeUI(
     //메인 프레임
     override fun getFrame(): InvFrame {
         return InvFX.frame(6, text("거래").decoration(TextDecoration.BOLD, true)) {
+            onClickBottom { e ->
+                if(viewer.isConfirmed || isNullOrAir(e.currentItem)) return@onClickBottom
+
+                viewer.registerItem(e)
+//                tradeData.openAll()
+                viewer.openUI()
+            }
+
             slot(0, 0) {item = info}
             slot(2, 0) {item = acceptorHead}
             slot(6, 0) {item = requesterHead}
@@ -95,36 +92,38 @@ class TradeUI(
                 onClick { tradeData.deny() }
             }
 
+            if(!viewer.isConfirmed && !viewer.tradeItems.isEmpty) {
+                slot(if(tradeData.acceptor === viewer) 2 else 6, 4) {
+                    item = confirm
+                    onClick { viewer.confirm() }
+                }
+            }
+
+            if(tradeData.acceptor.isConfirmed && tradeData.requester.isConfirmed) {
+                slot(4, 4) {
+                    item = trade
+                    onClick { tradeData.success() }
+                }
+            }
+
             list(1, 1, 3, 3, true, {tradeData.acceptor.tradeItems.toList()}) {
                 transform {it}
+                if(tradeData.acceptor === viewer && !viewer.isConfirmed) onClickItem { x, y, _, event ->
+                    if(isNullOrAir(event.currentItem)) return@onClickItem
+                    viewer.unregisterItem(x, y, event)
+//                tradeData.openAll()
+                    viewer.openUI()
+                }
             }
+
             list(5, 1, 7, 3, true, {tradeData.requester.tradeItems.toList()}) {
                 transform {it}
-            }
-
-            onClickBottom { e ->
-                if(isNullOrAir(e.currentItem) || viewer.isFull) return@onClickBottom
-                val item = e.currentItem!!.clone()
-                val exceeds: HashMap<Int, ItemStack>
-
-                if(e.click.isShiftClick) {
-                    exceeds = viewer.tradeItems.addItem(item)
-                    if(exceeds.isNotEmpty()) {
-                        viewer.isFull = true
-                        e.currentItem!!.amount = exceeds[0]!!.amount
-                    } else
-                        e.currentItem!!.amount = 0
-                } else {
-                    exceeds = viewer.tradeItems.addItem(item.apply {amount = 1})
-
-                    if(exceeds.isNotEmpty())
-                        viewer.isFull = true
-                    else
-                        e.currentItem!!.amount--
+                if(tradeData.acceptor !== viewer && !viewer.isConfirmed) onClickItem { x, y, _, event ->
+                    if(isNullOrAir(event.currentItem)) return@onClickItem
+                    viewer.unregisterItem(x, y, event)
+//                tradeData.openAll()
+                    viewer.openUI()
                 }
-
-                tradeData.openAll()
-                viewer.tradeItems.forEach { viewer.sendMessage(it.toString()) }
             }
 
             onClose { e ->
@@ -133,13 +132,21 @@ class TradeUI(
                     TradeState.PROCESSING -> {
                         when(e.reason) {
                             InventoryCloseEvent.Reason.PLAYER -> {
-                                viewer.sendMessage("거래 도즁에 창을 닫을 수 없습니다!")
-                                viewer.openUI()
+                                viewer.sendMessage("거래가 중지되었습니다.")
+                                if(tradeData.acceptor !== viewer) {
+                                    tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
+                                    tradeData.acceptor.closeUI()
+                                }
+                                else {
+                                    tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
+                                    tradeData.requester.closeUI()
+                                }
                             }
                             InventoryCloseEvent.Reason.OPEN_NEW -> return@onClose
                             else -> {
                                 tradeData.sendMessageAll("오류가 발생하여 거래가 중지되었습니다.")
-                                tradeData.closeAll()
+                                if(tradeData.acceptor !== viewer) tradeData.acceptor.closeUI()
+                                else tradeData.requester.closeUI()
                             }
                         }
                     }

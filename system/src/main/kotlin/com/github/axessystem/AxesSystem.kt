@@ -2,7 +2,9 @@ package com.github.axessystem
 
 import com.github.axescode.container.Containers
 import com.github.axescode.core.player.PlayerData
+import com.github.axescode.util.Colors
 import com.github.axescode.util.Items
+import com.github.axescode.util.Items.getCustomItem
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.listener.PlayerListener
@@ -10,18 +12,26 @@ import com.github.axessystem.listener.ServerListener
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.ui.GeneratorUI
+import com.github.axessystem.util.text
+import com.github.axessystem.util.texts
 import com.github.axessystem.util.useOutputStream
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
+import io.github.monun.invfx.InvFX
+import io.github.monun.invfx.frame.InvFrame
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
 import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectOutputStream
@@ -48,11 +58,11 @@ class AxesSystem: JavaPlugin() {
         kommand {
         register("test") {
             executes {
-                useOutputStream { bs, os ->
-                    os.writeObject(ItemStack(Material.PAPER).serialize())
-                    val str = Base64.getEncoder().encodeToString(bs.toByteArray())
-                    info(str)
-                }
+                InvFX.frame(1, text("awd")) {
+                    onClickBottom { e ->
+                        player.sendMessage("${e.currentItem}")
+                    }
+                }.let(player::openFrame)
             }
         }
 
