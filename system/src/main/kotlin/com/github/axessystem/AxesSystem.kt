@@ -92,7 +92,7 @@ class AxesSystem: JavaPlugin() {
                 then("generator" to generatorArgument) {
                     executes {
                         val generator: BlockGenerator by it
-                        Items.giveItem(player, generator.item)
+                        Items.addItem(player, generator.item)
                     }
                 }
             }

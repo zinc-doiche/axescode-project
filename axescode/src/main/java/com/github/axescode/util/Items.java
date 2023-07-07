@@ -6,6 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -101,23 +102,15 @@ public class Items {
     }
 
     /**
-     * 1. 일단 인벤토리에 저장 시도
-     * <br>
-     * 2. 안되면 뱉음
+     * 해당 {@link Player}에게 아이템을 전달합니다. 마인크래프트의 기본적인 아이템 획득 방식과 동일하게 작동합니다.
+     * 인벤토리 용량을 초과한 아이템은 그 자리에 떨어지게 됩니다.
+     *
+     * @param player 대상 {@link Player}
+     * @param items 전달할 {@link ItemStack}
      */
-    public static synchronized void giveItem(Player player, ItemStack item) {
-        int emptySlot = player.getInventory().firstEmpty();
-        if(emptySlot == -1) player.getWorld().dropItem(player.getLocation(), item);
-        else setItem(player, emptySlot, item);
-    }
-
     public static synchronized void addItem(Player player, ItemStack... items) {
         if(!player.getInventory().addItem(items).isEmpty()) {
             Arrays.stream(items).forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
         }
-    }
-
-    public static boolean isFull(Inventory inventory) {
-        return inventory.getMaxStackSize() == inventory.getSize();
     }
 }

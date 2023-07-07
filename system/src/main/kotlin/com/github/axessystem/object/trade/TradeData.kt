@@ -6,6 +6,7 @@ import com.github.axescode.core.trade.TradeItemVO
 import com.github.axescode.core.trade.TradeVO
 import com.github.axessystem.pluginScope
 import com.github.axessystem.ui.TradeUI
+import com.github.axessystem.util.ui.Visualize
 import com.github.axessystem.util.useOutputStream
 import io.github.monun.invfx.openFrame
 import kotlinx.coroutines.async
@@ -13,12 +14,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import java.sql.SQLException
-import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashSet
 
 data class TradeData(
     val acceptor: Trader,
@@ -29,9 +26,42 @@ data class TradeData(
 
     fun startTrade() {
         pluginScope.async {
-            acceptor.playerData.playerEntity.openFrame(TradeUI.getFrame(this@TradeData, acceptor))
-            requester.playerData.playerEntity.openFrame(TradeUI.getFrame(this@TradeData, requester))
+            acceptor.uiFrame = TradeUI(this@TradeData, acceptor)
+            requester.uiFrame = TradeUI(this@TradeData, requester)
+
+            openAll()
         }
+    }
+
+    /**
+     * 거래상태를 [TradeState.DENIED]로 바꾸고 거래를 종료합니다.
+     */
+    fun deny() {
+        tradeState = TradeState.DENIED
+        closeAll()
+    }
+
+    /**
+     * 거래상태를 [TradeState.SUCCESS]로 바꾸고 거래를 종료합니다.
+     */
+    fun success() {
+        tradeState = TradeState.SUCCESS
+        closeAll()
+    }
+
+    fun openAll() {
+        acceptor.openUI()
+        requester.openUI()
+    }
+
+    fun closeAll() {
+        acceptor.closeUI()
+        requester.closeUI()
+    }
+
+    fun sendMessageAll(msg: String) {
+        acceptor.sendMessage(msg)
+        requester.sendMessage(msg)
     }
 
     fun saveData() {
@@ -63,23 +93,30 @@ data class TradeData(
             }
         }
     }
-
-    fun deny() {
-        tradeState = TradeState.DENIED
-    }
-
-    fun success() {
-        tradeState = TradeState.SUCCESS
-    }
-
 }
 
 data class Trader(
     val playerData: PlayerData,
     var tradeMoney: Long = 0
-) {
+): Visualize<TradeUI> {
     val tradeItems: Inventory = Bukkit.createInventory(null, InventoryType.DISPENSER)
     var isFull = false
+    override var uiFrame: TradeUI? = null
+
+    val player: Player
+        get() = playerData.playerEntity
+
+    override fun openUI() {
+        player.openFrame(uiFrame?.getFrame() ?: return)
+    }
+
+    override fun closeUI() {
+        player.closeInventory()
+    }
+
+    fun sendMessage(msg: String) {
+        player.sendMessage(msg)
+    }
 }
 
 enum class TradeState {
