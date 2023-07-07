@@ -20,11 +20,6 @@ dependencies {
     implementation("io.github.monun:kommand-api:3.1.6")
     implementation("io.github.monun:heartbeat-coroutines:0.0.5")
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.15.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-
     //compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly ("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly ("com.github.LoneDev6:API-ItemsAdder:3.5.0b")

@@ -16,33 +16,10 @@ public class PluginListener implements Listener {
                 playerDAO.findPlayerByName(e.getPlayer().getName())
                     .ifPresentOrElse(playerData -> Containers.getPlayerDataContainer().addData(playerData.getPlayerName(), playerData),
                             () -> playerDAO.fastSave(e.getPlayer().getName())));
-
-        //Containers.getPlayerDataContainer().getData(e.getPlayer().getName())
-                //.map(PlayerData::toString).ifPresent(e.getPlayer()::sendMessage);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Containers.getPlayerDataContainer().removeData(e.getPlayer().getName());
     }
-
-
-//    @EventHandler
-//    public void onCrop(BlockBreakEvent e) {
-//        e.getPlayer().sendMessage(e.getBlock().toString());
-//
-//        Containers.getPlayerDataContainer().getData(e.getPlayer().getName()).ifPresent(playerData -> {
-//            switch (playerData.getPlayerJob().getJobType()) {
-//                case NONE -> {;}
-//                case FARMER -> {
-//
-//                    //add some constraint preventing non-crops from triggering this event
-//
-//                    ((FarmerAbility) playerData.getPlayerJob().getAbility()).onCrop(e, playerData);
-//                }
-//                case MINER -> {;}
-//                case FISHER -> {;}
-//            }
-//        });
-//    }
 }

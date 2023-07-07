@@ -39,4 +39,7 @@ public class AxescodePlugin extends JavaPlugin {
     public static void info(Object msg) {
         plugin.getLogger().info(msg.toString());
     }
+    public static void warn(Object msg) {
+        plugin.getLogger().warning(msg.toString());
+    }
 }

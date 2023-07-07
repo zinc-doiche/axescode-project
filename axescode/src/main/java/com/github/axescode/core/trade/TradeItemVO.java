@@ -1,10 +1,11 @@
 package com.github.axescode.core.trade;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TradeItemVO {
     private Long tradeItemId;
     private Long tradeId;
