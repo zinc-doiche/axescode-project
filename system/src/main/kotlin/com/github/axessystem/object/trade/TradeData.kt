@@ -5,29 +5,27 @@ import com.github.axescode.core.trade.TradeDAO
 import com.github.axescode.core.trade.TradeItemVO
 import com.github.axescode.core.trade.TradeVO
 import com.github.axescode.util.Items
+import com.github.axescode.util.Items.AIR
 import com.github.axescode.util.Items.isNullOrAir
-import com.github.axessystem.info
 import com.github.axessystem.pluginScope
 import com.github.axessystem.ui.TradeUI
+import com.github.axessystem.util.encodedItem
 import com.github.axessystem.util.ui.Visualize
 import com.github.axessystem.util.useOutputStream
+import com.github.axessystem.util.writeItem
 import io.github.monun.invfx.openFrame
 import kotlinx.coroutines.async
 import org.bukkit.Bukkit
-import org.bukkit.block.Dispenser
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
-import java.util.*
 
 data class TradeData(
     val acceptor: Trader,
     val requester: Trader
 ) {
-    var tradeState = TradeState.PROCESSING
+    var tradeState = TradeState.PROCEED
         private set
 
     fun startTrade() {
@@ -35,8 +33,8 @@ data class TradeData(
             acceptor.uiFrame = TradeUI(this@TradeData, acceptor)
             requester.uiFrame = TradeUI(this@TradeData, requester)
 
-//            openAll()
-            requester.openUI()
+            openAll()
+//            requester.openUI()
         }
     }
 
@@ -54,6 +52,10 @@ data class TradeData(
     fun success() {
         tradeState = TradeState.SUCCESS
         closeAll()
+    }
+
+    fun end() {
+        tradeState = TradeState.END
     }
 
     fun openAll() {
@@ -85,15 +87,12 @@ data class TradeData(
 
                 //ItemStack 직렬화
                 useOutputStream { bs, os ->
-                    acceptor.tradeItems.map { item ->
-                        os.writeObject(item.serialize().apply {
-                            if(containsKey("meta")) this["meta"] = (this["meta"] as ItemMeta).serialize()
-                        })
-                        os.flush()
+                    acceptor.getItems().map { item ->
+                        os.writeItem(item)
                         TradeItemVO.builder()
                             .tradeId(tradeVO.tradeId)
                             .playerId(acceptor.playerData.playerId)
-                            .tradeItem(Base64.getEncoder().encodeToString(bs.toByteArray()))
+                            .tradeItem(bs.encodedItem)
                             .build()
                     }.forEach(dao::saveItem) // 각각 저장
                 }
@@ -113,17 +112,15 @@ data class Trader(
         get() = playerData.playerEntity
 
     /**
-     * Inventory 컬렉션화에서의 Null 제거
+     * Inventory 컬렉션화에서의 Null / AIR 제거
      */
-    val getItems: Array<ItemStack>
-        get() = tradeItems.toList().filterNotNull().toTypedArray()
+    fun getItems(): List<ItemStack> = tradeItems.toList().filter { !isNullOrAir(it) }
 
     var isConfirmed = false
         private set
 
     fun confirm() {
         isConfirmed = true
-        openUI()
     }
 
     override fun openUI() {
@@ -138,41 +135,43 @@ data class Trader(
         player.sendMessage(msg)
     }
 
-    fun registerItem(event: InventoryClickEvent) {
-        val item = event.currentItem!!.clone()
-        val exceeds: HashMap<Int, ItemStack>
+    fun sortItems() {
+        val list = getItems()
 
-        if(event.click.isShiftClick) {
-            exceeds = tradeItems.addItem(item)
-
-            event.currentItem!!.amount = if(exceeds.isNotEmpty()) exceeds[0]!!.amount else 0
-        } else {
-            exceeds = tradeItems.addItem(item.apply {amount = 1})
-
-            if(exceeds.isEmpty())
-                event.currentItem!!.amount--
+        repeat(9) { i ->
+            tradeItems.setItem(i, if(i < list.size) list[i] else AIR)
         }
     }
 
-    fun unregisterItem(x: Int, y: Int, event: InventoryClickEvent) {
-        val slot = y * 3 + x
-        val item = event.currentItem!!
-        info(slot)
-        tradeItems.getItem(slot)?.let { info(it) }
+    fun registerItem(originalItem: ItemStack, isShiftClick: Boolean) {
+        val item = originalItem.clone()
 
-        if(event.click.isShiftClick) {
+        if(isShiftClick)
+            tradeItems.addItem(item).let { originalItem.amount = if(it.isEmpty()) 0 else it[0]!!.amount }
+        else if(tradeItems.addItem(item.apply {amount = 1}).isEmpty())
+            originalItem.amount--
+    }
+
+    fun unregisterItem(x: Int, y: Int, originalItem: ItemStack, isShiftClick: Boolean) {
+        val tradeItem = tradeItems.getItem(y * 3 + x)!!
+        val item = originalItem.clone()
+
+        if(isShiftClick) {
             Items.addItem(player, item)
-            tradeItems.getItem(slot)!!.amount = 0
+            tradeItem.amount = 0
+            sortItems()
         } else {
             Items.addItem(player, item.apply {amount = 1})
-            tradeItems.getItem(slot)!!.amount--
+            if(--tradeItem.amount == 0) sortItems()
+
         }
     }
 }
 
 enum class TradeState {
-    PROCESSING,
+    PROCEED,
     DENIED,
-    SUCCESS
+    SUCCESS,
+    END
     ;
 }
