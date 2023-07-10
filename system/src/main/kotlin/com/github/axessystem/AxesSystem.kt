@@ -22,6 +22,7 @@ import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
@@ -36,12 +37,6 @@ class AxesSystem: JavaPlugin() {
         pluginScope = HeartbeatScope()
 
         logger.info("Axescode System Init")
-
-        logger.filter = Filter { filter ->
-            println(filter.message)
-
-            filter.message != "54" || filter.message != "6"
-        }
 
         BlockGenerator.apply {
             configInit()
@@ -83,6 +78,12 @@ class AxesSystem: JavaPlugin() {
                         }
                     }
                 }
+            }
+        }
+
+        register("test2") {
+            executes {
+                player.openInventory(Bukkit.createInventory(player, 54))
             }
         }
 
