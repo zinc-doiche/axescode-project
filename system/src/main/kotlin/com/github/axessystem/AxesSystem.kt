@@ -15,6 +15,7 @@ import com.github.axessystem.ui.GeneratorUI
 import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
+import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
@@ -37,7 +38,7 @@ class AxesSystem: JavaPlugin() {
         pluginScope = HeartbeatScope()
 
         logger.info("Axescode System Init")
-
+        TexturedInventoryWrapper
         BlockGenerator.apply {
             configInit()
             read()

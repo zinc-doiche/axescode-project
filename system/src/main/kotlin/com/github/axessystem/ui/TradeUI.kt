@@ -10,7 +10,8 @@ import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
-import com.github.axessystem.util.ui.UI
+import com.github.axessystem.util.ui.UITemplateContainer
+import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import io.github.monun.invfx.InvFX
 import io.github.monun.invfx.frame.InvFrame
 import kotlinx.coroutines.*
@@ -23,21 +24,33 @@ import org.bukkit.inventory.meta.SkullMeta
 class TradeUI(
     private val tradeData: TradeData,
     private val viewer: Trader
-): UI {
-    private val info: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
-        meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
-    }
+) {
+    companion object {
+        init {
+            UITemplateContainer.register("trade") {
+                lines = 6
+                onOpen = { info("hello") }
+                onPlayerClose = { e ->
 
-    private val cancel: ItemStack = getCustomItem(Material.PAPER, text("나가기").color(Colors.red).decoration(TextDecoration.BOLD, true), 10003) { meta ->
-        meta.lore(texts("", "거래를 종료합니다."))
-    }
+                }
+            }
+        }
 
-    private val confirm: ItemStack = getCustomItem(Material.PAPER, text("아이템 확정").decoration(TextDecoration.BOLD, true), 10004) { meta ->
-        meta.lore(texts(text(""), text("거래 품목을 확정합니다."), text("※이후 품목을 바꿀 수 없습니다.").color(Colors.red).decoration(TextDecoration.BOLD, true)))
-    }
+        private val info: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
+            meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
+        }
 
-    private val trade: ItemStack = getCustomItem(Material.PAPER, text("거래 완료").decoration(TextDecoration.BOLD, true), 10004) { meta ->
-        meta.lore(texts("", "거래를 완료합니다."))
+        private val cancel: ItemStack = getCustomItem(Material.PAPER, text("나가기").color(Colors.red).decoration(TextDecoration.BOLD, true), 10003) { meta ->
+            meta.lore(texts("", "거래를 종료합니다."))
+        }
+
+        private val confirm: ItemStack = getCustomItem(Material.PAPER, text("아이템 확정").decoration(TextDecoration.BOLD, true), 10004) { meta ->
+            meta.lore(texts(text(""), text("거래 품목을 확정합니다."), text("※이후 품목을 바꿀 수 없습니다.").color(Colors.red).decoration(TextDecoration.BOLD, true)))
+        }
+
+        private val trade: ItemStack = getCustomItem(Material.PAPER, text("거래 완료").decoration(TextDecoration.BOLD, true), 10004) { meta ->
+            meta.lore(texts("", "거래를 완료합니다."))
+        }
     }
 
     private val acceptorHead: ItemStack = item(Material.PLAYER_HEAD) { meta ->
@@ -72,7 +85,7 @@ class TradeUI(
     }
 
     //메인 프레임
-    override fun getFrame(): InvFrame {
+    fun getFrame(): InvFrame {
         return InvFX.frame(6, text("거래").decoration(TextDecoration.BOLD, true)) {
             slot(0, 0) {item = info}
             slot(2, 0) {item = acceptorHead}
