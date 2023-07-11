@@ -15,7 +15,7 @@ import com.github.axessystem.ui.GeneratorUI
 import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
-import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
+import com.github.mckd.ui.UITemplates
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
@@ -30,14 +30,13 @@ import org.bukkit.command.TabExecutor
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
-import java.util.logging.Filter
 
-class AxesSystem: JavaPlugin() {
+class AxesFront: JavaPlugin() {
     override fun onEnable() {
         plugin = this
         pluginScope = HeartbeatScope()
 
-        logger.info("Axescode System Init")
+        logger.info("Axescode Front Init")
         BlockGenerator.apply {
             configInit()
             read()
@@ -59,7 +58,7 @@ class AxesSystem: JavaPlugin() {
                                     player.sendMessage(i.toString())
                                     os.writeItem(player.inventory.itemInMainHand)
                                     TradeItemVO.builder()
-                                        .playerId(Containers.getPlayerDataContainer().getData(player.name).get().playerId)
+                                        .playerId(Containers.getPlayerDataContainer().getData(player.name).playerId)
                                         .tradeId(1)
                                         .tradeItem(bs.encodedItem)
                                         .build()
@@ -81,19 +80,15 @@ class AxesSystem: JavaPlugin() {
             }
         }
 
-        register("test2") {
+        register("uitest") {
             executes {
-                player.openInventory(Bukkit.createInventory(player, 54))
+                UITemplates.getUI("test-ui").openUI(player)
             }
         }
 
         register("trade") {
             val traderArg = dynamic(StringType.SINGLE_WORD) { _, input ->
-                var trader: Trader? = null
-                Containers.getPlayerDataContainer().getData(input).ifPresent { data ->
-                    trader = Trader(data)
-                }
-                return@dynamic trader
+                Trader(Containers.getPlayerDataContainer().getData(input))
             }.apply {
                 suggests { suggest(Containers.getPlayerDataContainer().all.map(PlayerData::getPlayerName)) }
             }
@@ -150,19 +145,6 @@ class AxesSystem: JavaPlugin() {
             }
         }
         }
-    }
-
-    private fun registerCommand(
-        command: String,
-        onTabComplete: (CommandSender, Command, String, Array<out String>) -> MutableList<String>,
-        onCommand: (CommandSender, Command, String, Array<out String>) -> Boolean
-    ) {
-        getCommand(command)?.setExecutor(object : TabExecutor {
-            override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>)
-                    = onTabComplete(sender, command, label, args)
-            override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>)
-                    = onCommand(sender, command, label, args)
-        })
     }
 
     private fun registerAll(vararg listeners: Listener) {

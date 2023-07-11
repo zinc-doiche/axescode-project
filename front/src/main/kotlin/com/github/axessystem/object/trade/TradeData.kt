@@ -10,7 +10,6 @@ import com.github.axescode.util.Items.isNullOrAir
 import com.github.axessystem.pluginScope
 import com.github.axessystem.ui.TradeUI
 import com.github.axessystem.util.encodedItem
-import com.github.axessystem.util.ui.Visualize
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
 import io.github.monun.invfx.openFrame
@@ -104,9 +103,9 @@ data class TradeData(
 data class Trader(
     val playerData: PlayerData,
     var tradeMoney: Long = 0
-): Visualize<TradeUI> {
+) {
     val tradeItems: Inventory = Bukkit.createInventory(null, InventoryType.DISPENSER)
-    override var uiFrame: TradeUI? = null
+    var uiFrame: TradeUI? = null
 
     val player: Player
         get() = playerData.playerEntity
@@ -123,11 +122,11 @@ data class Trader(
         isConfirmed = true
     }
 
-    override fun openUI() {
+    fun openUI() {
         player.openFrame(uiFrame?.getFrame() ?: return)
     }
 
-    override fun closeUI() {
+    fun closeUI() {
         player.closeInventory()
     }
 

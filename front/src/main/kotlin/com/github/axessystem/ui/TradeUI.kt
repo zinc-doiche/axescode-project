@@ -10,7 +10,6 @@ import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
-import com.github.axessystem.util.ui.UITemplateContainer
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import io.github.monun.invfx.InvFX
 import io.github.monun.invfx.frame.InvFrame
@@ -26,16 +25,6 @@ class TradeUI(
     private val viewer: Trader
 ) {
     companion object {
-        init {
-            UITemplateContainer.register("trade") {
-                lines = 6
-                onOpen = { info("hello") }
-                onPlayerClose = { e ->
-
-                }
-            }
-        }
-
         private val info: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
             meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
         }
