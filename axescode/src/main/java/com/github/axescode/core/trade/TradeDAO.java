@@ -1,5 +1,6 @@
 package com.github.axescode.core.trade;
 
+import com.github.axescode.AxescodePlugin;
 import com.github.axescode.core.AbstractDAO;
 import com.github.axescode.mybatis.mapper.TradeMapper;
 import com.github.axescode.util.Transactional;
@@ -32,7 +33,18 @@ public class TradeDAO extends AbstractDAO<TradeDAO> implements Transactional {
 
     public static void use(Consumer<TradeDAO> consumer) {
         TradeDAO dao = new TradeDAO();
-        consumer.accept(dao);
-        dao.close();
+        try {
+            consumer.accept(dao);
+        } catch(Exception e) {
+            try {
+                AxescodePlugin.warn("트랜잭션 중 실패하여 롤백합니다.");
+                dao.rollback();
+            } catch (Exception ex) {
+                AxescodePlugin.warn("롤백에 실패하였습니다. 즉시 데이터베이스를 점검하세요.");
+                e.printStackTrace();
+            }
+        } finally {
+            dao.close();
+        }
     }
 }

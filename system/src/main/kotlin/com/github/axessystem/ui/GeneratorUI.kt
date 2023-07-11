@@ -1,6 +1,7 @@
 package com.github.axessystem.ui
 
 import com.github.axescode.util.Colors
+import com.github.axescode.util.Items.getCustomItem
 import com.github.axescode.util.Items.item
 import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.util.text
@@ -14,8 +15,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 
 object GeneratorUI {
     private val viewerPages = HashMap<Player, Int>()
-    private val leftBtn = item(Material.PAPER) { it.displayName(text("<")) }
-    private val rightBtn = item(Material.PAPER) { it.displayName(text(">")) }
+    private val leftBtn = getCustomItem(Material.PAPER, text("이전"), 10005) {}
+    private val rightBtn = getCustomItem(Material.PAPER, text("다음"), 10006) {}
 
     fun get(player: Player): InvFrame {
         if(!viewerPages.containsKey(player)) viewerPages[player] = 0
@@ -67,11 +68,6 @@ object GeneratorUI {
             slot(4, 0) {
                 item = item(Material.PAPER) {
                     it.displayName(text("${idx + 1} / ${pagination.totalPage}"))
-                }
-
-                onClick {
-                    viewerPages[player] = --idx
-                    player.openFrame(get(player))
                 }
             }
 
