@@ -38,7 +38,6 @@ class AxesSystem: JavaPlugin() {
         pluginScope = HeartbeatScope()
 
         logger.info("Axescode System Init")
-        TexturedInventoryWrapper
         BlockGenerator.apply {
             configInit()
             read()

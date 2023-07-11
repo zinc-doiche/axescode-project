@@ -16,7 +16,7 @@ class UIListener: Listener {
 
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
-        val ui = usingUITemplates[e.player] ?: return
+        val ui = usingUITemplates[e.whoClicked] ?: return
     }
 
     @EventHandler
