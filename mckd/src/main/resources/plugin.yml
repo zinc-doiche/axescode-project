@@ -1,0 +1,4 @@
+name: mckd
+version: '${version}'
+main: com.github.mckdprojects.mckd.Mckd
+api-version: '1.19'
