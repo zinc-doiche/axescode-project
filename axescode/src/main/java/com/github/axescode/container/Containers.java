@@ -6,7 +6,7 @@ public class Containers {
     private static final Container<PlayerData> playerDataContainer;
 
     static {
-        playerDataContainer = new Container<>() {};
+        playerDataContainer = new Container<>();
     }
 
     public static Container<PlayerData> getPlayerDataContainer() {

@@ -1,4 +1,6 @@
-name: mckd
-version: '${version}'
-main: com.github.mckdprojects.mckd.Mckd
+name: Mckd
+version: 1.0
+main: com.github.mckd.AxesSystem
 api-version: '1.19'
+depend:
+  - Axescode-Core

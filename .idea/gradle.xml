@@ -9,8 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/axescode" />
+            <option value="$PROJECT_DIR$/front" />
             <option value="$PROJECT_DIR$/mckd" />
-            <option value="$PROJECT_DIR$/system" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -20,8 +20,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/axescode" />
+            <option value="$PROJECT_DIR$/front" />
             <option value="$PROJECT_DIR$/mckd" />
-            <option value="$PROJECT_DIR$/system" />
           </set>
         </option>
       </GradleProjectSettings>

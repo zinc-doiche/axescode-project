@@ -2,6 +2,8 @@ package com.github.axessystem
 
 import com.github.axescode.container.Containers
 import com.github.axescode.core.player.PlayerData
+import com.github.axescode.core.trade.TradeDAO
+import com.github.axescode.core.trade.TradeItemVO
 import com.github.axescode.util.Items
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.`object`.generator.BlockGeneratorData
@@ -10,31 +12,31 @@ import com.github.axessystem.listener.ServerListener
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.ui.GeneratorUI
+import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
+import com.github.axessystem.util.writeItem
+import com.github.mckd.ui.UITemplates
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
 import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
-import org.bukkit.Material
+import kotlinx.coroutines.async
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.event.Listener
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.util.io.BukkitObjectOutputStream
-import java.io.ByteArrayOutputStream
 import java.util.*
 
-class AxesSystem: JavaPlugin() {
+class AxesFront: JavaPlugin() {
     override fun onEnable() {
         plugin = this
         pluginScope = HeartbeatScope()
 
-        logger.info("init axes-sys")
-
+        logger.info("Axescode Front Init")
         BlockGenerator.apply {
             configInit()
             read()
@@ -47,18 +49,46 @@ class AxesSystem: JavaPlugin() {
 
         kommand {
         register("test") {
-            executes {
-                useOutputStream { bs, os ->
-                    os.writeObject(ItemStack(Material.PAPER).serialize())
-                    val str = Base64.getEncoder().encodeToString(bs.toByteArray())
-                    info(str)
+            then("save") {
+                executes {
+                    pluginScope.async {
+                        TradeDAO.use { dao ->
+                            useOutputStream { bs, os ->
+                                repeat(10) { i ->
+                                    player.sendMessage(i.toString())
+                                    os.writeItem(player.inventory.itemInMainHand)
+                                    TradeItemVO.builder()
+                                        .playerId(Containers.getPlayerDataContainer().getData(player.name).playerId)
+                                        .tradeId(1)
+                                        .tradeItem(bs.encodedItem)
+                                        .build()
+                                    .let(dao::saveItem)
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+            then("read") {
+                executes {
+                    pluginScope.async {
+                        TradeDAO.use { dao ->
+                            Items.addItem(player, *dao.findAllById(1).map { Base64.getDecoder().decodeAsItem(it.tradeItem)!! }.toTypedArray())
+                        }
+                    }
+                }
+            }
+        }
+
+        register("uitest") {
+            executes {
+                UITemplates.getUI("test-ui").openUI(player)
             }
         }
 
         register("trade") {
             val traderArg = dynamic(StringType.SINGLE_WORD) { _, input ->
-                Trader(Containers.getPlayerDataContainer().getData(input).orElseThrow())
+                Trader(Containers.getPlayerDataContainer().getData(input))
             }.apply {
                 suggests { suggest(Containers.getPlayerDataContainer().all.map(PlayerData::getPlayerName)) }
             }
@@ -115,19 +145,6 @@ class AxesSystem: JavaPlugin() {
             }
         }
         }
-    }
-
-    private fun registerCommand(
-        command: String,
-        onTabComplete: (CommandSender, Command, String, Array<out String>) -> MutableList<String>,
-        onCommand: (CommandSender, Command, String, Array<out String>) -> Boolean
-    ) {
-        getCommand(command)?.setExecutor(object : TabExecutor {
-            override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>)
-                    = onTabComplete(sender, command, label, args)
-            override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>)
-                    = onCommand(sender, command, label, args)
-        })
     }
 
     private fun registerAll(vararg listeners: Listener) {

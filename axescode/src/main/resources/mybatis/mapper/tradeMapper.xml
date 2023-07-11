@@ -12,4 +12,9 @@
         insert into tbl_trade_item (trade_id, player_id, trade_item)
         values (#{tradeId}, #{playerId}, #{tradeItem})
     </insert>
+    <select id="selectAll" resultType="tradeItemVO">
+        select trade_item_id, trade_id, player_id, trade_item
+        from tbl_trade_item
+        where trade_id= #{tradeId}
+    </select>
 </mapper>

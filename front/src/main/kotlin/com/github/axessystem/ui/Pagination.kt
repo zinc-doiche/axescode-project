@@ -6,7 +6,15 @@ import kotlin.math.min
  * page: 0부터 시작함
  */
 class Pagination<E>(
+
+    /**
+     * 전체 요소 목록
+     */
     private val list: List<E>,
+
+    /**
+     * 한 페이지에서 보여줄 요소의 개수
+     */
     private val size: Int
 ) {
 

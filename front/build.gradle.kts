@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":axescode"))
+    implementation(project(":mckd"))
     //compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2023.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
 

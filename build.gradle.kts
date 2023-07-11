@@ -15,5 +15,4 @@ subprojects {
         }
         maven { url = uri("https://jitpack.io") }
     }
-
 }
