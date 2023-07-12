@@ -2,16 +2,17 @@ package com.github.mckd.listener;
 
 import com.github.mckd.ui.Slot;
 import com.github.mckd.ui.UITemplate;
+import com.github.mckd.ui.UITemplates;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 
 public class UIListener implements Listener {
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
@@ -73,5 +74,11 @@ public class UIListener implements Listener {
                 ui.getOnElseClose().accept(event);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCancelTrade(PlayerMoveEvent e) {
+        //UI 닫고 움직이는 것 방지
+        if(UITemplates.isViewer(e.getPlayer())) e.setCancelled(true);
     }
 }

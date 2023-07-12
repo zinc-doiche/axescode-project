@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UITemplateImpl implements UITemplate {
+public class UITemplateImpl implements UITemplate, Cloneable {
     private final int lines;
     private final Inventory inventory;
     private final Map<Tuple<Integer, Integer>, Slot> slots = new HashMap<>();
@@ -109,5 +109,14 @@ public class UITemplateImpl implements UITemplate {
     @Override
     public void setOnClickBottom(Consumer<InventoryClickEvent> onClickBottom) {
         this.onClickBottom = onClickBottom;
+    }
+
+    @Override
+    public UITemplateImpl clone() {
+        try {
+            return (UITemplateImpl) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

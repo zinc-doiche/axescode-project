@@ -6,15 +6,30 @@ import com.github.axescode.core.job.Jobs;
 import com.github.axescode.core.job.Proficiency;
 import com.github.axescode.mybatis.mapper.PlayerMapper;
 import com.github.axescode.core.AbstractDAO;
+import com.github.axescode.util.Transactional;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class PlayerDAO extends AbstractDAO<PlayerDAO> {
+public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
     private final PlayerMapper mapper = sqlSession.getMapper(PlayerMapper.class);
 
     protected PlayerDAO() {
         super(true);
+    }
+
+    protected PlayerDAO(boolean autoCommit) {
+        super(autoCommit);
+    }
+
+    @Override
+    public void commit() {
+        sqlSession.commit();
+    }
+
+    @Override
+    public void rollback() {
+        sqlSession.rollback();
     }
 
     public void fastSave(String playerName) {
@@ -25,12 +40,12 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> {
         mapper.insert(toVO(playerData));
     }
 
-    public Optional<PlayerData> findPlayer(Long playerId) {
-        return Optional.ofNullable(mapper.select(playerId)).map(PlayerDAO::toData);
+    public PlayerData findPlayer(Long playerId) {
+        return toData(mapper.select(playerId));
     }
 
-    public Optional<PlayerData> findPlayerByName(String playerName) {
-        return Optional.ofNullable(mapper.selectByName(playerName)).map(PlayerDAO::toData);
+    public PlayerData findPlayerByName(String playerName) {
+        return toData(mapper.selectByName(playerName));
     }
 
     public static void use(Consumer<PlayerDAO> consumer) {
@@ -39,12 +54,32 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> {
         dao.close();
     }
 
+    public static void useTransaction(Consumer<PlayerDAO> consumer) {
+        PlayerDAO dao = new PlayerDAO(true);
+        try {
+            consumer.accept(dao);
+            dao.commit();
+        } catch(Exception e) {
+            try {
+                AxescodePlugin.warn("트랜잭션 중 실패하여 롤백합니다.");
+                e.printStackTrace();
+                dao.rollback();
+            } catch (Exception ex) {
+                AxescodePlugin.warn("롤백에 실패하였습니다. 즉시 데이터베이스를 점검하세요.");
+                e.printStackTrace();
+            }
+        } finally {
+            dao.close();
+        }
+    }
+
     public static PlayerVO toVO(PlayerData playerData) {
         return PlayerVO.builder()
                 .playerId(playerData.getPlayerId())
                 .playerName(playerData.getPlayerName())
                 .playerNickName(playerData.getPlayerNickName())
                 .playerJobType(playerData.getPlayerJob().getJobType().name())
+                .playerMoney(playerData.getPlayerMoney())
                 .playerProficiencyStack(playerData.getPlayerProficiency().getProficiencyStack())
                 .playerProficiencyLevel(playerData.getPlayerProficiency().getProficiencyLevel())
                 .build();
@@ -55,6 +90,7 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> {
                 .playerId(playerVO.getPlayerId())
                 .playerName(playerVO.getPlayerName())
                 .playerNickName(playerVO.getPlayerNickName())
+                .playerMoney(playerVO.getPlayerMoney())
                 .playerJob(Jobs.get(Job.Type.valueOf(playerVO.getPlayerJobType())))
                 .playerProficiency(
                         Proficiency.builder()

@@ -4,6 +4,7 @@ import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.*
 import com.github.axescode.util.Sounds
 import com.github.axessystem.info
+import com.github.axessystem.`object`.trade.Decision
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.TradeState
 import com.github.axessystem.`object`.trade.Trader
@@ -28,17 +29,6 @@ class TradeUI(
     private val viewer: Trader
 ) {
     companion object {
-        init {
-            UITemplates.registerUI("trade", 6) { ui ->
-                ui.setSlot(0, 0) { slot ->
-                    slot.item = infoIcon
-                }
-                ui.setSlot(8, 0) { slot ->
-                    slot.item = cancelIcon
-                }
-            }
-        }
-
         private val infoIcon: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
             meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
         }
@@ -70,13 +60,13 @@ class TradeUI(
 
     //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
     private val lazyRollback: Job = pluginScope.launch(start = CoroutineStart.LAZY) {
-        tradeData.sendMessageAll("거래가 취소되었습니다. 아이템을 회수합니다.")
+        tradeData.sendMessageAll("등록된 아이템을 회수합니다.")
         addItem(tradeData.acceptor.player, *tradeData.acceptor.getItems().toTypedArray())
         addItem(tradeData.requester.player, *tradeData.requester.getItems().toTypedArray())
     }
 
     //저장 시 서브루틴
-    private val lazySave: Deferred<*> = pluginScope.async(start = CoroutineStart.LAZY) {
+    private val lazySave: Job = pluginScope.launch(start = CoroutineStart.LAZY) {
         tradeData.sendMessageAll("거래 기록 저장 중...")
         tradeData.saveData()
 
@@ -87,79 +77,116 @@ class TradeUI(
         tradeData.sendMessageAll("거래 완료!")
     }
 
-    fun getUI(): UITemplate = UITemplateImpl(6).apply {
-        setSlot(0, 0) { it.item = infoIcon }
-        setSlot(2, 0) { it.item = acceptorHead }
-        setSlot(6, 0) { it.item = requesterHead }
-        setSlot(8, 0) {
+    // 거래 종료 전까지 UI 띄우는 루틴
+    private val lazyReOpen: Deferred<*> = pluginScope.async(start = CoroutineStart.LAZY) {
+        delay(10L)
+        viewer.sendMessage("거래가 끝나기 전까지 창을 닫을 수 없습니다. 거래를 종료하시려면 X 버튼을 클릭해주세요.")
+        ui.openUI(viewer.player)
+    }
+
+    private val ui: UITemplate = UITemplates.createUI(6) { ui ->
+        ui.setSlot(0, 0) { it.item = infoIcon }
+        ui.setSlot(2, 0) { it.item = acceptorHead }
+        ui.setSlot(6, 0) { it.item = requesterHead }
+        ui.setSlot(8, 0) {
             it.item = cancelIcon
             it.setOnClick {
                 viewer.player.playSound(Sounds.click)
-                tradeData.deny()
+                tradeData.denyTrade()
             }
         }
-        if(!viewer.isConfirmed && !viewer.tradeItems.isEmpty) {
-            setSlot(if(tradeData.acceptor === viewer) 2 else 6, 4) {
+
+        // READY로 상태전환
+        if(viewer.decision == Decision.NOT_READY && !viewer.tradeItems.isEmpty) {
+            ui.setSlot(if(tradeData.acceptor === viewer) 2 else 6, 4) {
                 it.item = confirmIcon
                 it.setOnClick {
-                    viewer.confirm()
+                    viewer.decision = Decision.READY
                     viewer.player.playSound(Sounds.click)
-                    tradeData.openAll()
                 }
             }
         }
-        if(tradeData.acceptor.isConfirmed && tradeData.requester.isConfirmed) {
-            setSlot(4, 4) {
+
+        //CONFIRM으로 상태전환
+        if(tradeData.isAllReady) {
+            ui.setSlot(4, 4) {
                 it.item = tradeIcon
                 it.setOnClick {
                     viewer.player.playSound(Sounds.click)
-                    tradeData.success()
-                }
-            }
-        }
+                    viewer.decision = Decision.CONFIRM
 
-        repeat(3) { i ->
-            repeat(3) { j ->
-                setSlot(i+1, j+1) {
-                    it.item = tradeData.acceptor.getItems()[i+j]
-                    if(tradeData.acceptor !== viewer || viewer.isConfirmed) return@setSlot
-
-                    it.setOnClick { e ->
-                        if(isNullOrAir(e.currentItem)) return@setOnClick
-                        viewer.player.playSound(Sounds.click)
-                        viewer.unregisterItem(i, j, e.currentItem!!, e.isShiftClick)
-                        tradeData.openAll()
+                    // 양쪽 모두 승낙시 거래 진행
+                    if(tradeData.isAllConfirmed) {
+                        tradeData.successTrade()
+                        tradeData.closeAll()
+                        return@setOnClick
                     }
-                }
 
-                setSlot(i+5, j+1) {
-                    it.item = tradeData.requester.getItems()[i+j]
-                    if(tradeData.requester !== viewer || viewer.isConfirmed) return@setSlot
-
-                    it.setOnClick { e ->
-                        if(isNullOrAir(e.currentItem)) return@setOnClick
-                        viewer.player.playSound(Sounds.click)
-                        viewer.unregisterItem(i, j, e.currentItem!!, e.isShiftClick)
-                        tradeData.openAll()
+                    ui.setSlot(if(tradeData.acceptor === viewer) 2 else 6, 4) { slot ->
+                        slot.item = ItemStack(Material.GREEN_WOOL)
                     }
                 }
             }
         }
 
-        setOnClickBottom { e ->
-            if(viewer.isConfirmed || isNullOrAir(e.currentItem)) return@setOnClickBottom
-
+        //아이템 등록
+        ui.setOnClickBottom { e ->
+            if(viewer.decision == Decision.NOT_READY || isNullOrAir(e.currentItem)) return@setOnClickBottom
             viewer.player.playSound(Sounds.click)
             viewer.registerItem(e.currentItem!!, e.isShiftClick)
-            tradeData.openAll()
         }
 
-        setOnPluginClose {
+        ui.setOnPlayerClose { if(tradeData.tradeState == TradeState.PROCEED) lazyReOpen.start() }
+        ui.setOnElseClose {
+            viewer.sendMessage("거래가 중지되었습니다.")
+            if(tradeData.acceptor !== viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
+            else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
+            lazyRollback.start()
+        }
+        ui.setOnPluginClose {
             when(tradeData.tradeState) {
-                TradeState.PROCEED -> TODO()
-                TradeState.DENIED -> TODO()
-                TradeState.SUCCESS -> TODO()
-                TradeState.END -> TODO()
+                TradeState.PROCEED -> lazyReOpen.start()
+                TradeState.DENIED -> {
+                    viewer.sendMessage("거래가 중지되었습니다.")
+                    if(tradeData.acceptor !== viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
+                    else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
+                    lazyRollback.start()
+                }
+                TradeState.SUCCESS -> lazySave.start()
+            }
+        }
+    }
+
+    fun getUI(): UITemplate = ui.clone().apply {
+        for((i, item) in tradeData.acceptor.getItems().withIndex()) {
+            val x = i % 3
+            val y = i / 3
+
+            setSlot(x+1, y+1) {
+                it.item = item
+                if(tradeData.acceptor !== viewer || viewer.decision != Decision.NOT_READY) return@setSlot
+
+                it.setOnClick { e ->
+                    if(isNullOrAir(e.currentItem)) return@setOnClick
+                    viewer.player.playSound(Sounds.click)
+                    viewer.unregisterItem(x, y, e.currentItem!!, e.isShiftClick)
+                }
+            }
+        }
+
+        for((i, item) in tradeData.acceptor.getItems().withIndex()) {
+            val x = i % 3
+            val y = i / 3
+
+            setSlot(x+5, y+1) {
+                it.item = item
+                if(tradeData.requester !== viewer || viewer.decision != Decision.NOT_READY) return@setSlot
+
+                it.setOnClick { e ->
+                    if(isNullOrAir(e.currentItem)) return@setOnClick
+                    viewer.player.playSound(Sounds.click)
+                    viewer.unregisterItem(x, y, e.currentItem!!, e.isShiftClick)
+                }
             }
         }
     }

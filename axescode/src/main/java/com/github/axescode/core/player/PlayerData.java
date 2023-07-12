@@ -15,7 +15,7 @@ public class PlayerData implements com.github.axescode.container.Data {
     private Long playerId;
     private String playerName;
     private String playerNickName;
-
+    private Long playerMoney;
     private Player playerEntity;
     private Job playerJob;
     private Proficiency<? extends Job> playerProficiency;
