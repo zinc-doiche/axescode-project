@@ -2,7 +2,6 @@ package com.github.mckd.listener;
 
 import com.github.mckd.ui.Slot;
 import com.github.mckd.ui.UITemplate;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,11 +21,8 @@ public class UIListener implements Listener {
         if(!(inventory.getHolder() instanceof UITemplate)) return;
         // 지정한 UI가 맞으면 아이템 고정
         event.setCancelled(true);
-        event.setResult(Event.Result.DENY);
 
         ui = (UITemplate) inventory.getHolder();
-
-        event.getWhoClicked().sendMessage("*clack*");
 
         if(ui.getLines() * 9 <= event.getSlot()) {
             // Bottom Click
