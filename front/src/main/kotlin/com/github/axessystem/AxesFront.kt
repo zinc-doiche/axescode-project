@@ -15,6 +15,7 @@ import com.github.axessystem.ui.GeneratorUI
 import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
+import com.github.mckd.ui.UITemplate
 import com.github.mckd.ui.UITemplates
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.invfx.openFrame
@@ -80,9 +81,17 @@ class AxesFront: JavaPlugin() {
             }
         }
 
-        register("uitest") {
-            executes {
-                UITemplates.getUI("test-ui").openUI(player)
+        register("openui") {
+            val uiArgument = dynamic(StringType.SINGLE_WORD) { _, input ->
+                UITemplates.getUI(input)
+            }.apply {
+                suggests { suggest(UITemplates.getAllUINames()) }
+            }
+            then("ui" to uiArgument) {
+                executes {
+                    val ui: UITemplate by it
+                    ui.openUI(player)
+                }
             }
         }
 

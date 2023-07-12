@@ -1,22 +1,24 @@
 package com.github.mckd.ui;
 
-import com.github.axescode.container.Container;
 import com.github.mckd.AxesSystem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class UITemplates {
-    private static final Container<UITemplate> uiContainer;
+    private static final Map<String, UITemplate> uiContainer;
 
     static {
-        uiContainer = new Container<>();
+        uiContainer = new HashMap<>();
     }
 
     public static UITemplate getUI(String key) {
-        return uiContainer.getData(key);
+        return uiContainer.get(key);
     }
 
     public static void init() {
@@ -43,9 +45,13 @@ public class UITemplates {
         });
     }
 
+    public static List<String> getAllUINames() {
+        return uiContainer.keySet().stream().toList();
+    }
+
     public static void registerUI(String key, int lines, Consumer<UITemplate> consumer) {
         UITemplateImpl ui = new UITemplateImpl(lines);
         consumer.accept(ui);
-        uiContainer.addData(key, ui);
+        uiContainer.put(key, ui);
     }
 }
