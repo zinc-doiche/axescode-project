@@ -16,13 +16,13 @@
     </insert>
 
     <select id="select" resultType="playerVO">
-        SELECT player_id, player_name, player_nick_name, player_job_type, player_proficiency_stack, player_proficiency_level
+        SELECT player_id, player_name, player_nick_name, player_job_type, player_proficiency_stack, player_proficiency_level, player_money
         FROM tbl_player
         where player_id = #{playerId}
     </select>
 
     <select id="selectByName" resultType="playerVO">
-        SELECT player_id, player_name, player_nick_name, player_job_type, player_proficiency_stack, player_proficiency_level
+        SELECT player_id, player_name, player_nick_name, player_job_type, player_proficiency_stack, player_proficiency_level, player_money
         FROM tbl_player
         where player_name = #{playerName}
     </select>

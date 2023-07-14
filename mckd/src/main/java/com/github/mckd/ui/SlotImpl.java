@@ -13,10 +13,6 @@ public class SlotImpl implements Slot {
     private ItemStack item;
     private Consumer<InventoryClickEvent> onClick;
 
-    public void onClick(Consumer<InventoryClickEvent> consumer) {
-        onClick = consumer;
-    }
-
     @Override
     public Integer getX() {
         return x;
@@ -45,5 +41,10 @@ public class SlotImpl implements Slot {
     @Override
     public void setOnClick(Consumer<InventoryClickEvent> consumer) {
         this.onClick = consumer;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")={item=ItemStack(" + item.getType() + " x " + item.getAmount() + "), onClick=" + onClick + "}";
     }
 }

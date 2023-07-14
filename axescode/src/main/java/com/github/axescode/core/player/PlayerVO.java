@@ -12,8 +12,8 @@ public class PlayerVO {
     private Long playerId;
     private String playerName;
     private String playerNickName;
-    private Long playerMoney;
     private String playerJobType;
     private Integer playerProficiencyStack;
     private Integer playerProficiencyLevel;
+    private Long playerMoney;
 }

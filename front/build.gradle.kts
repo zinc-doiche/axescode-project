@@ -21,7 +21,7 @@ dependencies {
     implementation("io.github.monun:kommand-api:3.1.6")
     implementation("io.github.monun:heartbeat-coroutines:0.0.5")
 
-    //compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly ("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly ("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
 }

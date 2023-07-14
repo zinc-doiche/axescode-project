@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 public interface UITemplate extends InventoryHolder, Data {
     Slot getSlotAt(int x, int y);
     void setSlot(int x, int y, Consumer<Slot> consumer);
+    void removeSlot(int x, int y);
     int getLines();
 
     void openUI(Player player);

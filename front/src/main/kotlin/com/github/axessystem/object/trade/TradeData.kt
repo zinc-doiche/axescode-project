@@ -67,12 +67,12 @@ data class TradeData(
 
     fun openAll() {
         acceptor.openUI()
-        requester.openUI()
+        //requester.openUI()
     }
 
     fun closeAll() {
         acceptor.closeUI()
-        requester.closeUI()
+        //requester.closeUI()
     }
 
     fun sendMessageAll(msg: String) {
@@ -143,7 +143,7 @@ data class Trader(
      * [Inventory] 컬렉션화에서의 Null / AIR 제거
      */
     fun getItems(): List<ItemStack> = tradeItems.toList().filter { !isNullOrAir(it) }
-    fun openUI() { tradeUI?.getUI()?.openUI(player) }
+    fun openUI() { tradeUI?.openUI() }
     fun closeUI() { player.closeInventory() }
     fun sendMessage(msg: String) { player.sendMessage(msg) }
 
@@ -186,6 +186,11 @@ data class Trader(
             Items.addItem(player, item.apply {amount = 1})
             if(--tradeItem.amount == 0) sortItems()
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other !is Trader) return false
+        return playerData.playerId == other.playerData.playerId
     }
 }
 
