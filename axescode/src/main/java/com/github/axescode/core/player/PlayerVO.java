@@ -15,4 +15,5 @@ public class PlayerVO {
     private String playerJobType;
     private Integer playerProficiencyStack;
     private Integer playerProficiencyLevel;
+    private Long playerMoney;
 }

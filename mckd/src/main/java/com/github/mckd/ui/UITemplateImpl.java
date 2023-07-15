@@ -1,6 +1,8 @@
 package com.github.mckd.ui;
 
+import com.github.axescode.util.Items;
 import com.github.mckd.util.Tuple;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,10 +12,11 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UITemplateImpl implements UITemplate {
+public class UITemplateImpl implements UITemplate, Cloneable {
     private final int lines;
     private final Inventory inventory;
     private final Map<Tuple<Integer, Integer>, Slot> slots = new HashMap<>();
@@ -43,12 +46,22 @@ public class UITemplateImpl implements UITemplate {
         return slots.get(coordinate);
     }
 
+    public List<Slot> getSlots() {
+        return slots.values().stream().toList();
+    }
+
     @Override
     public void setSlot(int x, int y, @NotNull Consumer<Slot> consumer) {
         SlotImpl slot = new SlotImpl(x, y);
         consumer.accept(slot);
         inventory.setItem(x + y * 9, slot.getItem());
         slots.put(new Tuple<>(x, y), slot);
+    }
+
+    @Override
+    public void removeSlot(int x, int y) {
+        inventory.setItem(x + y * 9, Items.AIR);
+        slots.remove(new Tuple<>(x, y));
     }
 
     @Override
@@ -109,5 +122,14 @@ public class UITemplateImpl implements UITemplate {
     @Override
     public void setOnClickBottom(Consumer<InventoryClickEvent> onClickBottom) {
         this.onClickBottom = onClickBottom;
+    }
+
+    @Override
+    public UITemplateImpl clone() {
+        try {
+            return (UITemplateImpl) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
