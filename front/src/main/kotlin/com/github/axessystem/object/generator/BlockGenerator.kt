@@ -8,7 +8,6 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import java.io.File
-import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
@@ -22,12 +21,8 @@ import com.github.axessystem.util.texts
 import com.github.axessystem.util.ticksToMillis
 import kotlinx.coroutines.*
 import net.kyori.adventure.text.format.TextDecoration
-import org.apache.commons.lang3.tuple.MutablePair
 import org.bukkit.Location
-import org.bukkit.NamespacedKey
-import org.bukkit.block.Block
 import org.bukkit.metadata.FixedMetadataValue
-import org.bukkit.util.Vector
 import java.text.DecimalFormat
 
 class BlockGenerator private constructor(

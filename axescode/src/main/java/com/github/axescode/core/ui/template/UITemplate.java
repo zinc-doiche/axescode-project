@@ -1,4 +1,4 @@
-package com.github.mckd.ui;
+package com.github.axescode.core.ui.template;
 
 import com.github.axescode.container.Data;
 import org.bukkit.entity.Player;

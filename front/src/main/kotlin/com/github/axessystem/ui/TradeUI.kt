@@ -1,9 +1,9 @@
 package com.github.axessystem.ui
 
+import com.github.axescode.core.ui.UIHandler
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.*
 import com.github.axescode.util.Sounds
-import com.github.axessystem.info
 import com.github.axessystem.`object`.trade.Decision
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.TradeState
@@ -11,8 +11,8 @@ import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
-import com.github.mckd.ui.UITemplate
-import com.github.mckd.ui.UITemplates
+import com.github.axescode.core.ui.template.UITemplate
+import com.github.axescode.core.ui.UITemplates
 import kotlinx.coroutines.*
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.SkullMeta
 class TradeUI(
     private val tradeData: TradeData,
     private val viewer: Trader
-) {
+): UIHandler {
     companion object {
         private val infoIcon: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
             meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
@@ -64,15 +64,17 @@ class TradeUI(
     }
 
     //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
-    private val lazyRollback: Job = pluginScope.launch(start = CoroutineStart.LAZY) {
-        tradeData.sendMessageAll("등록된 아이템을 회수합니다.")
-        addItem(tradeData.acceptor.player, *tradeData.acceptor.getItems().toTypedArray())
-        addItem(tradeData.requester.player, *tradeData.requester.getItems().toTypedArray())
+    private fun lazyRollback() {
+        pluginScope.async {
+            tradeData.sendMessageAll("등록된 아이템을 회수합니다.")
+            addItem(tradeData.acceptor.player, *tradeData.acceptor.getItems().toTypedArray())
+            addItem(tradeData.requester.player, *tradeData.requester.getItems().toTypedArray())
+        }
     }
 
     //저장 시 서브루틴
     private fun lazySave() {
-        pluginScope.launch {
+        pluginScope.async {
             tradeData.sendMessageAll("거래 기록 저장 중...")
             tradeData.saveData()
 
@@ -91,6 +93,10 @@ class TradeUI(
             viewer.sendMessage("거래가 끝나기 전까지 창을 닫을 수 없습니다. 거래를 종료하시려면 X 버튼을 클릭해주세요.")
             ui.openUI(viewer.player)
         }
+    }
+
+    override fun openUI() {
+        ui.openUI(viewer.player)
     }
 
     private val ui: UITemplate = UITemplates.createUI(6) { ui ->
@@ -122,7 +128,7 @@ class TradeUI(
             viewer.sendMessage("거래가 중지되었습니다.")
             if (tradeData.acceptor !== viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
             else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
-            lazyRollback.start()
+            lazyRollback()
         }
         ui.setOnPluginClose {
             when (tradeData.tradeState) {
@@ -131,7 +137,7 @@ class TradeUI(
                     viewer.sendMessage("거래가 중지되었습니다.")
                     if (tradeData.acceptor != viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
                     else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
-                    lazyRollback.start()
+                    lazyRollback()
                 }
 
                 TradeState.SUCCESS -> lazySave()
@@ -226,10 +232,6 @@ class TradeUI(
                 } else ui.removeSlot(x + 5, y + 1)
             }
         }
-    }
-
-    fun openUI() {
-        ui.openUI(viewer.player)
     }
 }
 

@@ -12,11 +12,9 @@ repositories {
 
 dependencies {
     implementation(project(":axescode"))
-    implementation(project(":mckd"))
     //compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2023.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
 
-    implementation("io.github.monun:invfx-api:3.3.0")
     implementation("io.github.monun:tap-api:4.9.6")
     implementation("io.github.monun:kommand-api:3.1.6")
     implementation("io.github.monun:heartbeat-coroutines:0.0.5")

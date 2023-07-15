@@ -1,4 +1,4 @@
-package com.github.mckd.ui;
+package com.github.axescode.core.ui.template;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

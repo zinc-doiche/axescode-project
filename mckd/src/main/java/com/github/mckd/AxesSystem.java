@@ -1,7 +1,5 @@
 package com.github.mckd;
 
-import com.github.mckd.listener.UIListener;
-import com.github.mckd.ui.UITemplates;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,12 +11,6 @@ public final class AxesSystem extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-
-        UITemplates.init();
-
-        registerAll(
-                new UIListener()
-        );
     }
 
     public static JavaPlugin inst() {

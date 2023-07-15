@@ -15,19 +15,15 @@ import com.github.axessystem.ui.GeneratorUI
 import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
-import com.github.mckd.ui.UITemplate
-import com.github.mckd.ui.UITemplates
+import com.github.axescode.core.ui.template.UITemplate
+import com.github.axescode.core.ui.UITemplates
+import com.github.axessystem.`object`.generator.GeneratorViewer
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
-import io.github.monun.invfx.openFrame
 import io.github.monun.kommand.StringType
 import io.github.monun.kommand.getValue
 import io.github.monun.kommand.kommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import org.bukkit.Bukkit
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
-import org.bukkit.command.TabExecutor
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -82,9 +78,7 @@ class AxesFront: JavaPlugin() {
         }
 
         register("openui") {
-            val uiArgument = dynamic(StringType.SINGLE_WORD) { _, input ->
-                UITemplates.getUI(input)
-            }.apply {
+            val uiArgument = dynamic(StringType.SINGLE_WORD) { _, input -> UITemplates.getUI(input) }.apply {
                 suggests { suggest(UITemplates.getAllUINames()) }
             }
             then("ui" to uiArgument) {
@@ -136,7 +130,10 @@ class AxesFront: JavaPlugin() {
                 }
             }
             then("manage") {
-                executes { player.openFrame(GeneratorUI.get(player)) }
+                executes {
+                    val viewer = GeneratorViewer(player)
+                    GeneratorUI(viewer).openUI()
+                }
             }
             then("display") {
                 requires { player.isOp }
