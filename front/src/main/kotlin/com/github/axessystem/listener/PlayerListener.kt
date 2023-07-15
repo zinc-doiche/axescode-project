@@ -52,13 +52,10 @@ class PlayerListener: Listener {
                 BlockGeneratorData.remove(genData.location)
                 return
             }
-
             e.isCancelled = true
             if(genData.isCooldown) return
             Items.addItem(e.player, ItemStack(genData.generator.randomMaterial))
             genData.generator.startCooldown(genData, e.block.location)
         } ?: run { warn("${location.toVector()}에 있는 생성기가 부서졌거나 없습니다.") }
     }
-
-
 }

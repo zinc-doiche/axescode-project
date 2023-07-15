@@ -26,4 +26,11 @@
         FROM tbl_player
         where player_name = #{playerName}
     </select>
+
+    <update id="update">
+        update tbl_player
+        set player_nick_name = #{playerNickName}, player_job_type = #{playerJobType},
+        player_proficiency_stack = #{playerProficiencyStack}, player_proficiency_level = #{playerProficiencyLevel}, player_money = #{playerMoney}
+        where player_id = #{playerId}
+    </update>
 </mapper>

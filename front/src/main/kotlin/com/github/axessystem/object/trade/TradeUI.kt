@@ -1,13 +1,9 @@
-package com.github.axessystem.ui
+package com.github.axessystem.`object`.trade
 
 import com.github.axescode.core.ui.UIHandler
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.*
 import com.github.axescode.util.Sounds
-import com.github.axessystem.`object`.trade.Decision
-import com.github.axessystem.`object`.trade.TradeData
-import com.github.axessystem.`object`.trade.TradeState
-import com.github.axessystem.`object`.trade.Trader
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts

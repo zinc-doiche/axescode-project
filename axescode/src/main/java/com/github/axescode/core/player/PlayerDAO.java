@@ -48,6 +48,10 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
         return toData(mapper.selectByName(playerName));
     }
 
+    public void modify(PlayerVO playerVO) {
+        mapper.update(playerVO);
+    }
+
     public static void use(Consumer<PlayerDAO> consumer) {
         PlayerDAO dao = new PlayerDAO();
         consumer.accept(dao);
@@ -61,7 +65,7 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
             dao.commit();
         } catch(Exception e) {
             try {
-                AxescodePlugin.warn("트랜잭션 중 실패하여 롤백합니다.");
+                AxescodePlugin.warn("[" + dao.getClass().getName() + "] 트랜잭션 중 실패하여 롤백합니다.");
                 e.printStackTrace();
                 dao.rollback();
             } catch (Exception ex) {

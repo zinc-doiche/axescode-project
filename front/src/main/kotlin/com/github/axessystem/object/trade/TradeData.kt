@@ -4,7 +4,6 @@ import com.github.axescode.container.Data
 import com.github.axescode.core.trade.TradeDAO
 import com.github.axescode.core.trade.TradeItemVO
 import com.github.axescode.core.trade.TradeVO
-import com.github.axessystem.ui.TradeUI
 import com.github.axessystem.util.encodedItem
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
@@ -16,7 +15,7 @@ import com.github.axescode.core.ui.UITemplates
 data class TradeData(
     val acceptor: Trader,
     val requester: Trader
-): Data {
+) {
     var tradeState = TradeState.PROCEED
         private set
 

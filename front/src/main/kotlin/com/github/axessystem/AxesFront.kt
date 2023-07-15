@@ -11,7 +11,7 @@ import com.github.axessystem.listener.PlayerListener
 import com.github.axessystem.listener.ServerListener
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
-import com.github.axessystem.ui.GeneratorUI
+import com.github.axessystem.`object`.generator.GeneratorUI
 import com.github.axessystem.util.*
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem

@@ -1,9 +1,6 @@
 package com.github.axescode.container;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Container<D extends Data> {
     protected final Map<String, D> container = new HashMap<>();
@@ -17,10 +14,16 @@ public class Container<D extends Data> {
     public D getData(String key) {
         return container.get(key);
     }
+    public Optional<D> getData(Long key) {
+        return container.values().stream().filter(d -> Objects.equals(d.key(), key)).findFirst();
+    }
     public boolean hasData(String key) {
         return container.containsKey(key);
     }
     public void removeData(String key) {
         container.remove(key);
+    }
+    public boolean isEmpty() {
+        return container.isEmpty();
     }
 }

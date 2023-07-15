@@ -1,6 +1,5 @@
 package com.github.axescode.core.ui.template;
 
-import com.github.axescode.container.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -9,7 +8,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.function.Consumer;
 
-public interface UITemplate extends InventoryHolder, Data {
+public interface UITemplate extends InventoryHolder {
     Slot getSlotAt(int x, int y);
     void setSlot(int x, int y, Consumer<Slot> consumer);
     void removeSlot(int x, int y);

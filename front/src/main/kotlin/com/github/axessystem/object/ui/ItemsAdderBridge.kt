@@ -1,4 +1,4 @@
-package com.github.axessystem.ui
+package com.github.axessystem.`object`.ui
 
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper

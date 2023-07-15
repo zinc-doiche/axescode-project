@@ -12,6 +12,7 @@
         <typeAlias type="com.github.axescode.core.generator.PlacedGeneratorVO" alias="placedGeneratorVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeVO" alias="tradeVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeItemVO" alias="tradeItemVO"/>
+        <typeAlias type="com.github.axescode.core.shop.ShopItemVO" alias="shopItemVO"/>
     </typeAliases>
 
     <environments default="mysql">
@@ -30,5 +31,6 @@
         <mapper resource="mybatis/mapper/playerMapper.xml"/>
         <mapper resource="mybatis/mapper/placedGeneratorMapper.xml"/>
         <mapper resource="mybatis/mapper/tradeMapper.xml"/>
+        <mapper resource="mybatis/mapper/shopItemMapper.xml"/>
     </mappers>
 </configuration>
