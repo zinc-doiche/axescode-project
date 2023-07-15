@@ -1,79 +1,81 @@
 package com.github.axessystem.ui
 
+import com.github.axescode.core.ui.UIHandler
+import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.core.ui.Viewer
+import com.github.axescode.core.ui.template.UITemplate
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.getCustomItem
 import com.github.axescode.util.Items.item
 import com.github.axessystem.`object`.generator.BlockGeneratorData
+import com.github.axessystem.`object`.generator.GeneratorViewer
 import com.github.axessystem.util.text
-import io.github.monun.invfx.InvFX
-import io.github.monun.invfx.frame.InvFrame
-import io.github.monun.invfx.openFrame
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryCloseEvent
 
-object GeneratorUI {
-    private val viewerPages = HashMap<Player, Int>()
-    private val leftBtn = getCustomItem(Material.PAPER, text("이전"), 10005) {}
-    private val rightBtn = getCustomItem(Material.PAPER, text("다음"), 10006) {}
+class GeneratorUI(
+    private val viewer: GeneratorViewer
+): UIHandler {
+    companion object {
+        private val leftBtn = getCustomItem(Material.PAPER, text("이전"), 10005) {}
+        private val rightBtn = getCustomItem(Material.PAPER, text("다음"), 10006) {}
+    }
 
-    fun get(player: Player): InvFrame {
-        if(!viewerPages.containsKey(player)) viewerPages[player] = 0
-        var idx = viewerPages[player] ?: 0
+    var idx = 0
+    val pagination: Pagination<BlockGeneratorData>
+        get() {
+            val sortedList = BlockGeneratorData.getAllData
+                .filter { data -> data.location.world == viewer.player.world }
+                .sortedBy { data -> data.generator.generatorName }
 
-        val pagination = Pagination(BlockGeneratorData.getAllData.filter { data -> data.location.world == player.world }
-            .sortedBy { data -> data.generator.generatorName }, 45)
+            return Pagination(sortedList, 45)
+        }
 
-        return InvFX.frame(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) {
-            list(0, 1, 8, 5, true, {
-                pagination.getPagedList(idx)
-            }) {
-                transform { data ->
-                    data.generator.item.apply {
+    override fun openUI() { ui.openUI(viewer.player) }
+
+    val ui: UITemplate = UITemplates.createUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
+        ui.setOnOpen {
+            repeat(45) { i ->
+                val x = i % 9
+                val y = i / 9
+
+                if(pagination.getPagedList(idx).size <= i) return@repeat
+                val data = pagination.getPagedList(idx)[i]
+
+                ui.setSlot(x, y + 1) { slot ->
+                    slot.item = data.generator.item.apply {
                         editMeta { meta ->
-                            meta.displayName(meta.displayName()?.append(text(" [${data.location.toVector()}]")))
+                            meta.displayName( meta.displayName()?.append(text(" [${data.location.toVector()}]")))
                             meta.lore(meta.lore()?.apply {
                                 add(text(""))
                                 add(text("클릭하여 순간이동").color(Colors.beige).decoration(TextDecoration.BOLD, true))
                             })
                         }
                     }
-                }
-                onClickItem { _, _, item, _ ->
-                    player.teleportAsync(item.first.location)
+                    slot.setOnClick { viewer.player.teleportAsync(data.location) }
                 }
             }
-            if(idx != 0) {
-                slot(0, 0) {
-                    item = leftBtn
 
-                    onClick {
-                        viewerPages[player] = --idx
-                        player.openFrame(get(player))
+            ui.setSlot(4, 0) { it.item = item(Material.PAPER, text("${idx + 1} / ${pagination.totalPage}")) }
+
+            if (idx != 0) {
+                ui.setSlot(0, 0) { slot ->
+                    slot.item = leftBtn
+                    slot.setOnClick {
+                        idx--
+                        //update
+                        viewer.openUI()
                     }
                 }
             }
-            if(idx != pagination.totalPage - 1) {
-                slot(8, 0) {
-                    item = rightBtn
-
-                    onClick {
-                        viewerPages[player] = ++idx
-                        player.openFrame(get(player))
+            if (idx != pagination.totalPage - 1) {
+                ui.setSlot(0, 0) { slot ->
+                    slot.item = rightBtn
+                    slot.setOnClick {
+                        idx++
+                        //update
+                        viewer.openUI()
                     }
-                }
-            }
-
-            slot(4, 0) {
-                item = item(Material.PAPER) {
-                    it.displayName(text("${idx + 1} / ${pagination.totalPage}"))
-                }
-            }
-
-            onClose {
-                if(it.reason != InventoryCloseEvent.Reason.PLUGIN) {
-                    viewerPages.remove(player)
                 }
             }
         }

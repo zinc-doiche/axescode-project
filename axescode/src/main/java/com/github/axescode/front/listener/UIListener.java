@@ -1,10 +1,9 @@
-package com.github.mckd.listener;
+package com.github.axescode.front.listener;
 
-import com.github.mckd.AxesSystem;
-import com.github.mckd.ui.Slot;
-import com.github.mckd.ui.UITemplate;
-import com.github.mckd.ui.UITemplateImpl;
-import com.github.mckd.ui.UITemplates;
+import com.github.axescode.core.ui.template.Slot;
+import com.github.axescode.core.ui.template.UITemplate;
+import com.github.axescode.core.ui.template.UITemplateImpl;
+import com.github.axescode.core.ui.UITemplates;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

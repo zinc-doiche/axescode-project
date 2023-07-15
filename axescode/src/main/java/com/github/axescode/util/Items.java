@@ -27,11 +27,19 @@ public class Items {
         return item;
     }
 
+    public static @NotNull ItemStack item(Material material, Component name) {
+        return item(material, meta -> meta.displayName(name));
+    }
+
     public static @NotNull ItemStack item(Material material, Component name, Consumer<ItemMeta> block) {
         return item(material, meta -> {
             meta.displayName(name);
             block.accept(meta);
         });
+    }
+
+    public static @NotNull ItemStack getCustomItem(Material material, Component name, int customModelNumber) {
+        return item(material, name, meta -> meta.setCustomModelData(customModelNumber));
     }
 
     public static @NotNull ItemStack getCustomItem(Material material, Component name, int customModelNumber, Consumer<ItemMeta> init) {

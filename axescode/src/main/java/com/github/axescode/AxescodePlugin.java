@@ -1,6 +1,8 @@
 package com.github.axescode;
 
+import com.github.axescode.core.ui.UITemplates;
 import com.github.axescode.front.listener.PluginListener;
+import com.github.axescode.front.listener.UIListener;
 import com.github.axescode.mybatis.MybatisConfig;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -21,9 +23,11 @@ public class AxescodePlugin extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         MybatisConfig.init();
+        UITemplates.init();
 
         registerAllListeners(
-                new PluginListener()
+                new PluginListener(),
+                new UIListener()
         );
     }
 

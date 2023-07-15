@@ -1,8 +1,8 @@
-package com.github.mckd.ui;
+package com.github.axescode.core.ui.template;
 
 import com.github.axescode.util.Items;
-import com.github.mckd.util.Tuple;
-import lombok.ToString;
+import com.github.axescode.util.Tuple;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -30,6 +30,11 @@ public class UITemplateImpl implements UITemplate, Cloneable {
     public UITemplateImpl(Integer lines) {
         this.lines = lines;
         inventory = Bukkit.createInventory(this, lines * 9);
+    }
+
+    public UITemplateImpl(Integer lines, Component title) {
+        this.lines = lines;
+        inventory = Bukkit.createInventory(this, lines * 9, title);
     }
 
     @Override

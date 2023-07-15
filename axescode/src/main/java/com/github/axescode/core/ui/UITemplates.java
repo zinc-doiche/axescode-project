@@ -1,6 +1,9 @@
-package com.github.mckd.ui;
+package com.github.axescode.core.ui;
 
-import com.github.mckd.AxesSystem;
+import com.github.axescode.AxescodePlugin;
+import com.github.axescode.core.ui.template.UITemplate;
+import com.github.axescode.core.ui.template.UITemplateImpl;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -29,12 +32,12 @@ public class UITemplates {
             ui.setOnOpen(e -> e.getPlayer().sendMessage("opened"));
             ui.setOnElseClose(e -> {
                 e.getPlayer().sendMessage("cannot close");
-                AxesSystem.inst().getServer().getScheduler().runTaskLater(AxesSystem.inst(),
+                AxescodePlugin.inst().getServer().getScheduler().runTaskLater(AxescodePlugin.inst(),
                         () -> ui.openUI((Player) e.getPlayer()), 1L);
             });
             ui.setOnPlayerClose(e -> {
                 e.getPlayer().sendMessage("cannot close");
-                AxesSystem.inst().getServer().getScheduler().runTaskLater(AxesSystem.inst(),
+                AxescodePlugin.inst().getServer().getScheduler().runTaskLater(AxescodePlugin.inst(),
                         () -> ui.openUI((Player) e.getPlayer()), 1L);
             });
 
@@ -64,6 +67,12 @@ public class UITemplates {
 
     public static UITemplate createUI(int lines, Consumer<UITemplate> consumer) {
         UITemplateImpl ui = new UITemplateImpl(lines);
+        consumer.accept(ui);
+        return ui;
+    }
+
+    public static UITemplate createUI(int lines, Component title, Consumer<UITemplate> consumer) {
+        UITemplateImpl ui = new UITemplateImpl(lines, title);
         consumer.accept(ui);
         return ui;
     }
