@@ -1,35 +1,20 @@
 package com.github.axescode.mybatis;
 
-import com.github.axescode.core.generator.PlacedGeneratorVO;
-import com.github.axescode.core.player.PlayerVO;
-import com.github.axescode.mybatis.mapper.PlacedGeneratorMapper;
-import com.github.axescode.mybatis.mapper.PlayerMapper;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.transaction.TransactionFactory;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Reader;
 
 public class MybatisConfig {
-    private static final int IDLE = 30;
-    private static final int MAX_POOL_SIZE = 30;
-    private static final Long MAX_LIFE_TIME = 58000L;
-
     private static SqlSessionFactory sqlSessionFactory;
 
     static {
-        String resource = "mybatis/config.xml";
+        String xmlResource = "mybatis/config.xml";
         Reader reader = null;
         try {
-            reader = Resources.getResourceAsReader(resource);
+            reader = Resources.getResourceAsReader(xmlResource);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
         } catch (IOException e) {
             e.printStackTrace();
