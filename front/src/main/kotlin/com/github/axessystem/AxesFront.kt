@@ -2,6 +2,7 @@ package com.github.axessystem
 
 import com.github.axescode.container.Containers
 import com.github.axescode.core.player.PlayerData
+import com.github.axescode.core.ui.UITemplates
 import com.github.axescode.util.Items
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.listener.PlayerListener
@@ -11,11 +12,16 @@ import com.github.axessystem.`object`.generator.GeneratorUI
 import com.github.axessystem.`object`.generator.GeneratorViewer
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
+import dev.lone.itemsadder.api.FontImages.FontImageWrapper
+import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import kotlinx.coroutines.CoroutineScope
+import org.bukkit.Material
 import org.bukkit.command.*
+import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.StringUtil
 
@@ -35,12 +41,42 @@ class AxesFront: JavaPlugin() {
             ServerListener()
         )
 
+        register("showui", { player, _, _, args ->
+            val tabs = Tabs(args)
+            when(args.size) {
+                1 -> tabs.get(0, "axescode:")
+                2 -> tabs.get(1, "<lines>")
+                3 -> tabs.get(2, "<dy>")
+                4 -> tabs.get(3, "<dx>")
+                else -> tabs.default
+            }
+        }, { player, _, _, args ->
+            if(player !is Player) return@register false
+            val lines = if(args.size > 1) args[1].toInt() else 6
+            val dy = if(args.size > 2) args[2].toInt() else 16
+            val dx = if(args.size > 3) args[3].toInt() else -8
+
+            UITemplates.createUI(lines) { ui ->
+                repeat(45) { i ->
+                    val x = i % 9
+                    val y = i / 9
+
+                    ui.setSlot(x, y) {
+                        it.item = ItemStack(Material.PAPER)
+                    }
+                }
+            }.openUI(player)
+            TexturedInventoryWrapper.setPlayerInventoryTexture(player, FontImageWrapper(args[0]), "", dy, dx)
+            true
+        })
+
         register("trade", { _, _, _, args ->
             val list = mutableListOf<String>()
             Containers.getPlayerDataContainer().let { con ->
+                val tabs = Tabs(args)
                 when(args.size) {
-                    1 -> StringUtil.copyPartialMatches(args[0], con.all.map(PlayerData::getPlayerName), list)
-                    2 -> StringUtil.copyPartialMatches(args[1], con.all.map(PlayerData::getPlayerName), list)
+                    1 -> tabs.get(0, *con.all.map(PlayerData::getPlayerName).toTypedArray())
+                    2 -> tabs.get(1, *con.all.map(PlayerData::getPlayerName).toTypedArray())
                     else -> list
                 }
             }
@@ -69,8 +105,7 @@ class AxesFront: JavaPlugin() {
             }
         },
         { player, _, _, args ->
-            if(player !is Player) false
-            player as Player
+            if(player !is Player) return@register false
             when(args.size) {
                 1 -> when(args[0]) {
                     "manage" -> {
@@ -134,6 +169,10 @@ class AxesFront: JavaPlugin() {
 
     private fun registerAll(vararg listeners: Listener) {
         listeners.forEach { server.pluginManager.registerEvents(it, this) }
+    }
+
+    private fun register(command: String, commandExecutor: (player: CommandSender, command: Command, label: String, args: Array<out String>) -> Boolean) {
+        getCommand(command)?.setExecutor { sender, commandObj, label, args -> commandExecutor(sender, commandObj, label, args) }
     }
 
     private fun register(

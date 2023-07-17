@@ -10,6 +10,8 @@ import com.github.axescode.core.ui.UITemplates
 import com.github.axescode.util.Items
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.Lockable
+import dev.lone.itemsadder.api.FontImages.FontImageWrapper
+import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.async
 
 /**
@@ -39,7 +41,6 @@ data class TradeData(
     fun startTrade() {
         acceptor.tradeUI = TradeUI(this@TradeData, acceptor)
         requester.tradeUI = TradeUI(this@TradeData, requester)
-
         UITemplates.addViewer(acceptor.player)
         UITemplates.addViewer(requester.player)
         openAll()
