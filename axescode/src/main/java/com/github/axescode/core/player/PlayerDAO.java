@@ -36,16 +36,20 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
         mapper.fastInsert(playerName);
     }
 
-    public void save(PlayerData playerData) {
-        mapper.insert(toVO(playerData));
+    public void save(PlayerVO playerVO) {
+        mapper.insert(playerVO);
     }
 
-    public PlayerData findPlayer(Long playerId) {
-        return toData(mapper.select(playerId));
+    public PlayerVO findPlayer(Long playerId) {
+        return mapper.select(playerId);
     }
 
-    public PlayerData findPlayerByName(String playerName) {
-        return toData(mapper.selectByName(playerName));
+    public PlayerVO findPlayerByName(String playerName) {
+        return mapper.selectByName(playerName);
+    }
+
+    public void modify(PlayerVO playerVO) {
+        mapper.update(playerVO);
     }
 
     public static void use(Consumer<PlayerDAO> consumer) {
@@ -61,7 +65,7 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
             dao.commit();
         } catch(Exception e) {
             try {
-                AxescodePlugin.warn("트랜잭션 중 실패하여 롤백합니다.");
+                AxescodePlugin.warn("[" + dao.getClass().getName() + "] 트랜잭션 중 실패하여 롤백합니다.");
                 e.printStackTrace();
                 dao.rollback();
             } catch (Exception ex) {

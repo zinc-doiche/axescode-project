@@ -1,14 +1,13 @@
-package com.github.axessystem.ui
+package com.github.axessystem.`object`.generator
 
 import com.github.axescode.core.ui.UIHandler
 import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.Viewer
 import com.github.axescode.core.ui.template.UITemplate
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.getCustomItem
 import com.github.axescode.util.Items.item
-import com.github.axessystem.`object`.generator.BlockGeneratorData
-import com.github.axessystem.`object`.generator.GeneratorViewer
+import com.github.axessystem.info
+import com.github.axessystem.`object`.ui.Pagination
 import com.github.axessystem.util.text
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -35,6 +34,7 @@ class GeneratorUI(
 
     val ui: UITemplate = UITemplates.createUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
         ui.setOnOpen {
+            info("open")
             repeat(45) { i ->
                 val x = i % 9
                 val y = i / 9
@@ -69,7 +69,7 @@ class GeneratorUI(
                 }
             }
             if (idx != pagination.totalPage - 1) {
-                ui.setSlot(0, 0) { slot ->
+                ui.setSlot(8, 0) { slot ->
                     slot.item = rightBtn
                     slot.setOnClick {
                         idx++

@@ -15,7 +15,8 @@ import com.github.axescode.util.Colors
 import com.github.axescode.util.Items
 import com.github.axessystem.info
 import com.github.axessystem.pluginScope
-import com.github.axessystem.util.*
+import com.github.axessystem.util.Configurable
+import com.github.axessystem.util.Placeable
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
 import com.github.axessystem.util.ticksToMillis

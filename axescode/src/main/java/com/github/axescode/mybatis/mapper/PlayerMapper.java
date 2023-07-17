@@ -10,4 +10,5 @@ public interface PlayerMapper extends IMapper {
     PlayerVO select(Long playerId);
     PlayerVO selectByName(String playerName);
     void fastInsert(String playerName);
+    void update(PlayerVO playerVO);
 }

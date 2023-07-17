@@ -4,14 +4,13 @@ import com.github.axescode.core.job.Job;
 import com.github.axescode.core.job.Proficiency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.github.axescode.container.Data;
 import org.bukkit.entity.Player;
 
-@Data
+@lombok.Data
 @AllArgsConstructor
 @Builder
-public class PlayerData implements com.github.axescode.container.Data {
+public class PlayerData implements Data {
     private Long playerId;
     private String playerName;
     private String playerNickName;
@@ -19,4 +18,9 @@ public class PlayerData implements com.github.axescode.container.Data {
     private Player playerEntity;
     private Job playerJob;
     private Proficiency<? extends Job> playerProficiency;
+
+    @Override
+    public Long key() {
+        return playerId;
+    }
 }

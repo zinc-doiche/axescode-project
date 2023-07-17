@@ -1,11 +1,13 @@
 package com.github.axescode;
 
 import com.github.axescode.core.ui.UITemplates;
-import com.github.axescode.front.listener.PluginListener;
+import com.github.axescode.front.listener.PlayerListener;
+import com.github.axescode.front.listener.ServerListener;
 import com.github.axescode.front.listener.UIListener;
 import com.github.axescode.mybatis.MybatisConfig;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,9 +28,15 @@ public class AxescodePlugin extends JavaPlugin {
         UITemplates.init();
 
         registerAllListeners(
-                new PluginListener(),
+                new ServerListener(),
+                new PlayerListener(),
                 new UIListener()
         );
+    }
+
+    @Override
+    public void onDisable() {
+        plugin.getServer().getOnlinePlayers().forEach(Player::kick);
     }
 
     private void registerAllListeners(Listener... listeners) {

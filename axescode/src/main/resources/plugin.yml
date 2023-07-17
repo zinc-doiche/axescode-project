@@ -2,6 +2,7 @@ name: Axescode-Core
 version: '1.0-ALPHA'
 main: com.github.axescode.AxescodePlugin
 api-version: 1.19
+database: true
 commands:
   job:
     description: job

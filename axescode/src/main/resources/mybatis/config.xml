@@ -3,6 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <properties resource="mybatis/hikari.properties">
+        <property name="serverName" value=""/>
+        <property name="port" value=""/>
+        <property name="databaseName" value=""/>
+        <property name="user" value=""/>
+        <property name="password" value=""/>
+    </properties>
+
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
@@ -12,16 +20,18 @@
         <typeAlias type="com.github.axescode.core.generator.PlacedGeneratorVO" alias="placedGeneratorVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeVO" alias="tradeVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeItemVO" alias="tradeItemVO"/>
+        <typeAlias type="com.github.axescode.core.shop.ShopItemVO" alias="shopItemVO"/>
     </typeAliases>
 
     <environments default="mysql">
         <environment id="mysql">
             <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/axescode"/>
-                <property name="username" value="root"/>
-                <property name="password" value="1234"/>
+            <dataSource type="com.github.axescode.mybatis.HikariDataSourceFactory">
+                <property name="serverName" value="${serverName}"/>
+                <property name="port" value="${port}"/>
+                <property name="databaseName" value="${databaseName}"/>
+                <property name="user" value="${user}"/>
+                <property name="password" value="${password}"/>
             </dataSource>
         </environment>
     </environments>
@@ -30,5 +40,7 @@
         <mapper resource="mybatis/mapper/playerMapper.xml"/>
         <mapper resource="mybatis/mapper/placedGeneratorMapper.xml"/>
         <mapper resource="mybatis/mapper/tradeMapper.xml"/>
+        <mapper resource="mybatis/mapper/shopItemMapper.xml"/>
     </mappers>
+
 </configuration>

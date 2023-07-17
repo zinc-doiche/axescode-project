@@ -14,7 +14,6 @@ import org.bukkit.event.server.ServerLoadEvent
 import org.bukkit.util.Vector
 
 class ServerListener: Listener {
-
     @EventHandler
     fun onLoad(e: ServerLoadEvent) {
         PlacedGeneratorDAO.use { dao ->

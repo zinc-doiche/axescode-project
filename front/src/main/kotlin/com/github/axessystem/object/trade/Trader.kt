@@ -3,7 +3,6 @@ package com.github.axessystem.`object`.trade
 import com.github.axescode.core.player.PlayerData
 import com.github.axescode.core.ui.Viewer
 import com.github.axescode.util.Items
-import com.github.axessystem.ui.TradeUI
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
