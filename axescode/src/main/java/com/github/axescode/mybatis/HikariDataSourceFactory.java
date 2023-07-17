@@ -17,11 +17,7 @@ public class HikariDataSourceFactory implements DataSourceFactory {
     @Override
     public void setProperties(Properties props) {
         config.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
-        config.addDataSourceProperty("serverName", "localhost");
-        config.addDataSourceProperty("port", 3306);
-        config.addDataSourceProperty("databaseName", "axescode");
-        config.addDataSourceProperty("user", "root");
-        config.addDataSourceProperty("password", 1234);
+        config.setDataSourceProperties(props);
         config.setMinimumIdle(IDLE);
         config.setMaximumPoolSize(MAX_POOL_SIZE);
         config.setMaxLifetime(MAX_LIFE_TIME);

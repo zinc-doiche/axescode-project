@@ -3,6 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <properties resource="mybatis/hikari.properties">
+        <property name="serverName" value=""/>
+        <property name="port" value=""/>
+        <property name="databaseName" value=""/>
+        <property name="user" value=""/>
+        <property name="password" value=""/>
+    </properties>
+
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
@@ -18,7 +26,13 @@
     <environments default="mysql">
         <environment id="mysql">
             <transactionManager type="JDBC"/>
-            <dataSource type="com.github.axescode.mybatis.HikariDataSourceFactory"/>
+            <dataSource type="com.github.axescode.mybatis.HikariDataSourceFactory">
+                <property name="serverName" value="${serverName}"/>
+                <property name="port" value="${port}"/>
+                <property name="databaseName" value="${databaseName}"/>
+                <property name="user" value="${user}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
         </environment>
     </environments>
 

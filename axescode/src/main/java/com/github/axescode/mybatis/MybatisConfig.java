@@ -29,34 +29,6 @@ public class MybatisConfig {
         }
     }
 
-//    static {
-//        HikariConfig hikari = new HikariConfig();
-//
-//        hikari.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
-//        hikari.addDataSourceProperty("serverName", "localhost");
-//        hikari.addDataSourceProperty("port", 3306);
-//        hikari.addDataSourceProperty("databaseName", "axescode");
-//        hikari.addDataSourceProperty("user", "root");
-//        hikari.addDataSourceProperty("password", 1234);
-//
-//        hikari.setMinimumIdle(IDLE);
-//        hikari.setMaximumPoolSize(MAX_POOL_SIZE);
-//        hikari.setMaxLifetime(MAX_LIFE_TIME);
-//
-//        DataSource dataSource = new HikariDataSource(hikari);
-//        TransactionFactory transactionFactory = new JdbcTransactionFactory();
-//        Environment environment = new Environment("development", transactionFactory, dataSource);
-//        Configuration configuration = new Configuration(environment);
-//
-//        configuration.setMapUnderscoreToCamelCase(true);
-//        configuration.getTypeAliasRegistry().registerAlias("playerVO", PlayerVO.class);
-//        configuration.getTypeAliasRegistry().registerAlias("placedGeneratorVO", PlacedGeneratorVO.class);
-//        configuration.addMapper(PlayerMapper.class);
-//        configuration.addMapper(PlacedGeneratorMapper.class);
-//
-//        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-//    }
-
     public static void init() {
         // Perform initialization if needed
     }
