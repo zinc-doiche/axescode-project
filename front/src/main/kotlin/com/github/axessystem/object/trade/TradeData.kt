@@ -1,6 +1,5 @@
 package com.github.axessystem.`object`.trade
 
-import com.github.axescode.container.Data
 import com.github.axescode.core.trade.TradeDAO
 import com.github.axescode.core.trade.TradeItemVO
 import com.github.axescode.core.trade.TradeVO
@@ -8,6 +7,10 @@ import com.github.axessystem.util.encodedItem
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
 import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.util.Items
+import com.github.axessystem.pluginScope
+import com.github.axessystem.util.Lockable
+import kotlinx.coroutines.async
 
 /**
  * @see [TradeData.startTrade]
@@ -15,7 +18,12 @@ import com.github.axescode.core.ui.UITemplates
 data class TradeData(
     val acceptor: Trader,
     val requester: Trader
-) {
+): Lockable {
+    private var isLocked = HashMap<String, Boolean>()
+    override fun lock(key: String) { isLocked[key] = true }
+    override fun isLocked(key: String): Boolean = isLocked[key] ?: false
+    override fun unLock(key: String) { isLocked[key] = false }
+
     var tradeState = TradeState.PROCEED
         private set
 
@@ -41,6 +49,9 @@ data class TradeData(
      * 거래상태를 [TradeState.DENIED]로 바꾸고 거래를 종료합니다.
      */
     fun denyTrade() {
+        if(isLocked["state"] == true) return
+        lock("state")
+
         tradeState = TradeState.DENIED
         UITemplates.removeViewer(acceptor.player)
         UITemplates.removeViewer(requester.player)
@@ -51,9 +62,40 @@ data class TradeData(
      */
 
     fun successTrade() {
+        if(isLocked("state")) return
+        lock("state")
+
         tradeState = TradeState.SUCCESS
         UITemplates.removeViewer(acceptor.player)
         UITemplates.removeViewer(requester.player)
+    }
+
+
+    //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
+    fun lazyRollback() {
+        if(isLocked("end")) return
+        lock("end")
+        pluginScope.async {
+            sendMessageAll("등록된 아이템을 회수합니다.")
+            Items.addItem(acceptor.player, *acceptor.getItems().toTypedArray())
+            Items.addItem(requester.player, *requester.getItems().toTypedArray())
+        }
+    }
+
+    //저장 시 서브루틴
+    fun lazySave() {
+        if(isLocked("end")) return
+        lock("end")
+        pluginScope.async {
+            sendMessageAll("거래 기록 저장 중...")
+            saveData()
+
+            sendMessageAll("거래 진행 중...")
+            Items.addItem(requester.player, *acceptor.getItems().toTypedArray())
+            Items.addItem(acceptor.player, *requester.getItems().toTypedArray())
+
+            sendMessageAll("거래 완료!")
+        }
     }
 
     fun openAll() {

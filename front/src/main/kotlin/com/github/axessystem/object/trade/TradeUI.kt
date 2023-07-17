@@ -9,6 +9,7 @@ import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
 import com.github.axescode.core.ui.template.UITemplate
 import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.util.Items
 import kotlinx.coroutines.*
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -59,29 +60,6 @@ class TradeUI(
         meta.displayName(text(tradeData.requester.player.name).color(Colors.gold))
     }
 
-    //거레 취소 시 아이템 돌려주는 롤백용 서브루틴
-    private fun lazyRollback() {
-        pluginScope.async {
-            tradeData.sendMessageAll("등록된 아이템을 회수합니다.")
-            addItem(tradeData.acceptor.player, *tradeData.acceptor.getItems().toTypedArray())
-            addItem(tradeData.requester.player, *tradeData.requester.getItems().toTypedArray())
-        }
-    }
-
-    //저장 시 서브루틴
-    private fun lazySave() {
-        pluginScope.async {
-            tradeData.sendMessageAll("거래 기록 저장 중...")
-            tradeData.saveData()
-
-            tradeData.sendMessageAll("거래 진행 중...")
-            addItem(tradeData.requester.player, *tradeData.acceptor.getItems().toTypedArray())
-            addItem(tradeData.acceptor.player, *tradeData.requester.getItems().toTypedArray())
-
-            tradeData.sendMessageAll("거래 완료!")
-        }
-    }
-
     // 거래 종료 전까지 UI 띄우는 루틴
     private fun lazyReOpen() {
         pluginScope.async {
@@ -124,7 +102,7 @@ class TradeUI(
             viewer.sendMessage("거래가 중지되었습니다.")
             if (tradeData.acceptor !== viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
             else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
-            lazyRollback()
+            tradeData.lazyRollback()
         }
         ui.setOnPluginClose {
             when (tradeData.tradeState) {
@@ -133,10 +111,10 @@ class TradeUI(
                     viewer.sendMessage("거래가 중지되었습니다.")
                     if (tradeData.acceptor != viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
                     else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
-                    lazyRollback()
+                    tradeData.lazyRollback()
                 }
 
-                TradeState.SUCCESS -> lazySave()
+                TradeState.SUCCESS -> tradeData.lazySave()
             }
         }
 
@@ -164,7 +142,7 @@ class TradeUI(
             } else ui.removeSlot(if (tradeData.acceptor == viewer) 2 else 6, 4)
 
             //CONFIRM으로 상태전환
-            if (tradeData.isAllReady) {
+            if (tradeData.isAllReady && viewer.decision != Decision.CONFIRM) {
                 ui.setSlot(4, 4) {
                     it.item = tradeIcon
                     it.setOnClick {

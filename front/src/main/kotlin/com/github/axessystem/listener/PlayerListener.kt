@@ -5,6 +5,7 @@ import com.github.axescode.core.generator.PlacedGeneratorVO
 import com.github.axescode.util.Items
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.`object`.generator.BlockGeneratorData
+import com.github.axessystem.`object`.menu.MenuUI
 import com.github.axessystem.util.Placeable
 import com.github.axessystem.warn
 import org.bukkit.GameMode
@@ -13,9 +14,18 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 
 class PlayerListener: Listener {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onShiftFPressed(e: PlayerSwapHandItemsEvent) {
+        if(e.player.isSneaking) {
+            e.isCancelled = true
+            MenuUI.openUI(e.player)
+        }
+    }
 
     @EventHandler
     fun onPlace(e: BlockPlaceEvent) {

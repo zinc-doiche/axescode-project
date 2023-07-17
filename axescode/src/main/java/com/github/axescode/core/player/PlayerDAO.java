@@ -36,16 +36,16 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
         mapper.fastInsert(playerName);
     }
 
-    public void save(PlayerData playerData) {
-        mapper.insert(toVO(playerData));
+    public void save(PlayerVO playerVO) {
+        mapper.insert(playerVO);
     }
 
-    public PlayerData findPlayer(Long playerId) {
-        return toData(mapper.select(playerId));
+    public PlayerVO findPlayer(Long playerId) {
+        return mapper.select(playerId);
     }
 
-    public PlayerData findPlayerByName(String playerName) {
-        return toData(mapper.selectByName(playerName));
+    public PlayerVO findPlayerByName(String playerName) {
+        return mapper.selectByName(playerName);
     }
 
     public void modify(PlayerVO playerVO) {

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.axescode.mybatis.mapper.PlayerMapper">
-    <insert id="insert">
+    <insert id="insert" keyProperty="playerId" keyColumn="player_id" useGeneratedKeys="true">
         INSERT INTO tbl_player
         (player_name)
         VALUES(#{playerName})
