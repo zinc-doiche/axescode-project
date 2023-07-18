@@ -1,9 +1,6 @@
 package com.github.axescode.core.ui;
 
-import com.github.axescode.core.ui.template.DynamicUI;
-import com.github.axescode.core.ui.template.SquareUI;
-import com.github.axescode.core.ui.template.UI;
-import com.github.axescode.core.ui.template.SquareUIImpl;
+import com.github.axescode.core.ui.template.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -42,7 +39,7 @@ public class UITemplates {
      * {@link SquareUI}을 구현합니다.
      *
      * @param lines y축 슬롯 개수
-     * @param consumer 초기 설정
+     * @param consumer 인벤토리 타이틀
      * @param title 초기 설정
      * @return 만들어진 {@link SquareUI}
      */
@@ -53,14 +50,28 @@ public class UITemplates {
     }
 
     /**
-     * {@link UI}을 구현합니다.
+     * {@link DynamicUI}을 구현합니다.
      *
      * @param inventoryType 인벤토리 타입
      * @param consumer 초기 설정
-     * @return 만들어진 {@link UI}
+     * @return 만들어진 {@link DynamicUI}
      */
-    public static UI createUI(InventoryType inventoryType, Consumer<UI> consumer) {
-        DynamicUI ui = new DynamicUI(inventoryType);
+    public static DynamicUI createDynamicUI(InventoryType inventoryType, Consumer<DynamicUI> consumer) {
+        DynamicUIImpl ui = new DynamicUIImpl(inventoryType);
+        consumer.accept(ui);
+        return ui;
+    }
+
+    /**
+     * {@link DynamicUI}을 구현합니다.
+     *
+     * @param inventoryType 인벤토리 타입
+     * @param title 인벤토리 타이틀
+     * @param consumer 초기 설정
+     * @return 만들어진 {@link DynamicUI}
+     */
+    public static DynamicUI createDynamicUI(InventoryType inventoryType, Component title, Consumer<DynamicUI> consumer) {
+        DynamicUIImpl ui = new DynamicUIImpl(inventoryType, title);
         consumer.accept(ui);
         return ui;
     }

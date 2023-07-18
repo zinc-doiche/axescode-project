@@ -1,6 +1,6 @@
 package com.github.axescode.front.listener;
 
-import com.github.axescode.core.ui.template.Slot;
+import com.github.axescode.core.ui.slot.SquareSlot;
 import com.github.axescode.core.ui.template.SquareUI;
 import com.github.axescode.core.ui.template.UI;
 import com.github.axescode.core.ui.UITemplates;
@@ -17,7 +17,7 @@ public class UIListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        UI ui; Slot slot;
+        UI ui; SquareSlot squareSlot;
 
         // 지정한 UI가 아닐 경우 제외
         if(!(inventory.getHolder() instanceof UI)) return;
@@ -42,10 +42,10 @@ public class UIListener implements Listener {
         } else {
             // UI Click
             int x = event.getRawSlot() % 9, y = event.getRawSlot() / 9;
-            slot = squareUI.getSlotAt(x, y);
+            squareSlot = squareUI.getSlotAt(x, y);
 
-            if(slot == null || slot.getOnClick() == null) return;
-            slot.getOnClick().accept(event);
+            if(squareSlot == null || squareSlot.getOnClick() == null) return;
+            squareSlot.getOnClick().accept(event);
         }
     }
 

@@ -1,14 +1,15 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.core.ui.slot;
 
+import com.github.axescode.core.ui.template.UI;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
 
+/**
+ * {@link UI}의 슬롯 하나를 나타냅니다.
+ */
 public interface Slot {
-    Integer getX();
-    Integer getY();
-
     ItemStack getItem();
     void setItem(ItemStack item);
 

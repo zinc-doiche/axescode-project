@@ -1,5 +1,7 @@
 package com.github.axescode.core.ui.template;
 
+import com.github.axescode.core.ui.slot.SquareSlot;
+import com.github.axescode.core.ui.slot.SquareSlotImpl;
 import com.github.axescode.util.Items;
 import com.github.axescode.util.Tuple;
 import net.kyori.adventure.text.Component;
@@ -19,7 +21,7 @@ import java.util.function.Consumer;
 public class SquareUIImpl implements SquareUI, Cloneable {
     private final int lines;
     private final Inventory inventory;
-    private final Map<Tuple<Integer, Integer>, Slot> slots = new HashMap<>();
+    private final Map<Tuple<Integer, Integer>, SquareSlot> slots = new HashMap<>();
 
     private Consumer<InventoryOpenEvent> onOpen;
     private Consumer<InventoryCloseEvent> onPlayerClose;
@@ -37,29 +39,27 @@ public class SquareUIImpl implements SquareUI, Cloneable {
         inventory = Bukkit.createInventory(this, lines * 9, title);
     }
 
-
-
     @Override
     public void openUI(Player player) {
         player.openInventory(inventory);
     }
 
     @Override
-    public Slot getSlotAt(int x, int y) {
+    public SquareSlot getSlotAt(int x, int y) {
         return getSlotAt(new Tuple<>(x, y));
     }
 
-    public Slot getSlotAt(Tuple<Integer, Integer> coordinate) {
+    public SquareSlot getSlotAt(Tuple<Integer, Integer> coordinate) {
         return slots.get(coordinate);
     }
 
-    public List<Slot> getSlots() {
+    public List<SquareSlot> getSlots() {
         return slots.values().stream().toList();
     }
 
     @Override
-    public void setSlot(int x, int y, @NotNull Consumer<Slot> consumer) {
-        SlotImpl slot = new SlotImpl(x, y);
+    public void setSlot(int x, int y, @NotNull Consumer<SquareSlot> consumer) {
+        SquareSlotImpl slot = new SquareSlotImpl(x, y);
         consumer.accept(slot);
         inventory.setItem(x + y * 9, slot.getItem());
         slots.put(new Tuple<>(x, y), slot);

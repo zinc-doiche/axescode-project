@@ -20,7 +20,7 @@
         <typeAlias type="com.github.axescode.core.generator.PlacedGeneratorVO" alias="placedGeneratorVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeVO" alias="tradeVO"/>
         <typeAlias type="com.github.axescode.core.trade.TradeItemVO" alias="tradeItemVO"/>
-        <typeAlias type="com.github.axescode.core.shop.ShopItemVO" alias="shopItemVO"/>
+        <typeAlias type="com.github.axescode.core.auction.AuctionItemVO" alias="auctionItemVO"/>
     </typeAliases>
 
     <environments default="mysql">

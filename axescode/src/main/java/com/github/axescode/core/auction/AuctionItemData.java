@@ -1,4 +1,4 @@
-package com.github.axescode.core.shop;
+package com.github.axescode.core.auction;
 
 import com.github.axescode.container.Data;
 import lombok.*;
@@ -8,15 +8,15 @@ import org.bukkit.inventory.ItemStack;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ShopItemData implements Data {
-    private Long shopItemId;
+public class AuctionItemData implements Data {
+    private Long auctionItemId;
     private String playerName;
     private ItemStack shopItem;
-    private Long shopItemPrice;
-    private Integer shopItemStock;
+    private Long auctionItemPrice;
+    private Integer auctionItemStock;
 
     @Override
     public Long key() {
-        return shopItemId;
+        return auctionItemId;
     }
 }

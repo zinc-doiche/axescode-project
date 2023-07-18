@@ -4,10 +4,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.util.function.Consumer;
 
+/**
+ * 이벤트를 구현 가능한 {@link Inventory}를 가지는 {@link InventoryHolder}를 나타냅니다.
+ * @see InventoryHolder
+ */
 public interface UI extends InventoryHolder {
     void openUI(Player player);
 
