@@ -1,5 +1,6 @@
 package com.github.axescode.core.economy;
 
+import com.github.axescode.container.Containers;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
@@ -7,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 
 public class AxesEconomy implements Economy {
+
     @Override
     public boolean isEnabled() {
         return false;
@@ -64,82 +66,90 @@ public class AxesEconomy implements Economy {
 
     @Override
     public double getBalance(String playerName) {
-        return 0;
+        return Containers.getPlayerDataContainer().getData(playerName).getPlayerMoney();
     }
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return 0;
+        return Containers.getPlayerDataContainer().getData(player.getName()).getPlayerMoney();
     }
 
     @Override
     public double getBalance(String playerName, String world) {
-        return 0;
+        return Containers.getPlayerDataContainer().getData(playerName).getPlayerMoney();
     }
 
     @Override
     public double getBalance(OfflinePlayer player, String world) {
-        return 0;
+        return Containers.getPlayerDataContainer().getData(player.getName()).getPlayerMoney();
     }
 
     @Override
     public boolean has(String playerName, double amount) {
-        return false;
+        return this.getBalance(playerName) >= amount;
     }
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return false;
+        return this.getBalance(player) >= amount;
     }
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        return false;
+        return this.getBalance(playerName, worldName) >= amount;
     }
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
-        return false;
+        return this.getBalance(player, worldName) >= amount;
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName) - amount));
+        return new EconomyResponse(amount, this.getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player) - amount));
+        return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName, worldName) - amount));
+        return new EconomyResponse(amount, this.getBalance(playerName, worldName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player, worldName) - amount));
+        return new EconomyResponse(amount, this.getBalance(player, worldName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName) + amount));
+        return new EconomyResponse(amount, this.getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player) + amount));
+        return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName, worldName) + amount));
+        return new EconomyResponse(amount, this.getBalance(playerName, worldName), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player, worldName) + amount));
+        return new EconomyResponse(amount, this.getBalance(player, worldName), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
@@ -221,4 +231,5 @@ public class AxesEconomy implements Economy {
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
         return false;
     }
+
 }
