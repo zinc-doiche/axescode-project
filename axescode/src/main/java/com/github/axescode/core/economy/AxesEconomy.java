@@ -107,25 +107,25 @@ public class AxesEconomy implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
         Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName) - amount));
-        return new EconomyResponse(amount, this.getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, this.getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player) - amount));
-        return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
         Containers.getPlayerDataContainer().getData(playerName).setPlayerMoney((long) (this.getBalance(playerName, worldName) - amount));
-        return new EconomyResponse(amount, this.getBalance(playerName, worldName), EconomyResponse.ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, this.getBalance(playerName, worldName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
         Containers.getPlayerDataContainer().getData(player.getName()).setPlayerMoney((long) (this.getBalance(player, worldName) - amount));
-        return new EconomyResponse(amount, this.getBalance(player, worldName), EconomyResponse.ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, this.getBalance(player, worldName), EconomyResponse.ResponseType.SUCCESS, "Error");
     }
 
     @Override
