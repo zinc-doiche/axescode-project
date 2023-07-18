@@ -18,7 +18,6 @@ import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import kotlinx.coroutines.CoroutineScope
 import org.bukkit.Material
 import org.bukkit.command.*
-import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
@@ -56,7 +55,7 @@ class AxesFront: JavaPlugin() {
             val dy = if(args.size > 2) args[2].toInt() else 16
             val dx = if(args.size > 3) args[3].toInt() else -8
 
-            UITemplates.createUI(lines) { ui ->
+            UITemplates.createSquareUI(lines) { ui ->
                 repeat(45) { i ->
                     val x = i % 9
                     val y = i / 9

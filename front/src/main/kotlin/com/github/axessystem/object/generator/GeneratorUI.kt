@@ -2,7 +2,7 @@ package com.github.axessystem.`object`.generator
 
 import com.github.axescode.core.ui.UIHandler
 import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.template.UITemplate
+import com.github.axescode.core.ui.template.UI
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.getCustomItem
 import com.github.axescode.util.Items.item
@@ -32,7 +32,7 @@ class GeneratorUI(
 
     override fun openUI() { ui.openUI(viewer.player) }
 
-    val ui: UITemplate = UITemplates.createUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
+    val ui: UI = UITemplates.createSquareUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
         ui.setOnOpen {
             info("open")
             repeat(45) { i ->

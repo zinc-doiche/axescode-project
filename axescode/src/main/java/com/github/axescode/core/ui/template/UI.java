@@ -8,12 +8,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.function.Consumer;
 
-public interface UITemplate extends InventoryHolder {
-    Slot getSlotAt(int x, int y);
-    void setSlot(int x, int y, Consumer<Slot> consumer);
-    void removeSlot(int x, int y);
-    int getLines();
-
+public interface UI extends InventoryHolder {
     void openUI(Player player);
 
     Consumer<InventoryOpenEvent> getOnOpen();
@@ -28,5 +23,5 @@ public interface UITemplate extends InventoryHolder {
     void setOnElseClose(Consumer<InventoryCloseEvent> consumer);
     void setOnClickBottom(Consumer<InventoryClickEvent> consumer);
 
-    UITemplate clone();
+    UI clone();
 }
