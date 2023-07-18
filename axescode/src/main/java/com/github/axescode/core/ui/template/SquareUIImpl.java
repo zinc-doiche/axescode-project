@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UITemplateImpl implements UITemplate, Cloneable {
+public class SquareUIImpl implements SquareUI, Cloneable {
     private final int lines;
     private final Inventory inventory;
     private final Map<Tuple<Integer, Integer>, Slot> slots = new HashMap<>();
@@ -27,15 +27,17 @@ public class UITemplateImpl implements UITemplate, Cloneable {
     private Consumer<InventoryCloseEvent> onElseClose;
     private Consumer<InventoryClickEvent> onClickBottom;
 
-    public UITemplateImpl(Integer lines) {
+    public SquareUIImpl(Integer lines) {
         this.lines = lines;
         inventory = Bukkit.createInventory(this, lines * 9);
     }
 
-    public UITemplateImpl(Integer lines, Component title) {
+    public SquareUIImpl(Integer lines, Component title) {
         this.lines = lines;
         inventory = Bukkit.createInventory(this, lines * 9, title);
     }
+
+
 
     @Override
     public void openUI(Player player) {
@@ -130,9 +132,9 @@ public class UITemplateImpl implements UITemplate, Cloneable {
     }
 
     @Override
-    public UITemplateImpl clone() {
+    public SquareUIImpl clone() {
         try {
-            return (UITemplateImpl) super.clone();
+            return (SquareUIImpl) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

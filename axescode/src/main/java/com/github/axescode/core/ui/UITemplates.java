@@ -1,78 +1,66 @@
 package com.github.axescode.core.ui;
 
-import com.github.axescode.AxescodePlugin;
-import com.github.axescode.core.ui.template.UITemplate;
-import com.github.axescode.core.ui.template.UITemplateImpl;
+import com.github.axescode.core.ui.template.DynamicUI;
+import com.github.axescode.core.ui.template.SquareUI;
+import com.github.axescode.core.ui.template.UI;
+import com.github.axescode.core.ui.template.SquareUIImpl;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * {@link UITemplate}을 다루는 {@code Manager Class}입니다.
+ * {@link UI}을 다루는 {@code Manager Class}입니다.
  */
 public class UITemplates {
-    private static final Map<String, UITemplate> uiContainer;
     private static final Set<Player> uiViewers;
 
     static {
-        uiContainer = new HashMap<>();
         uiViewers = new HashSet<>();
     }
 
     // 프라이빗 접근 제한
     private UITemplates() {;}
 
-    public static void init() {
-        registerUI("test-ui", 3, ui -> {
-            ui.setOnOpen(e -> e.getPlayer().sendMessage("opened"));
-            ui.setOnElseClose(e -> {
-                e.getPlayer().sendMessage("cannot close");
-                AxescodePlugin.inst().getServer().getScheduler().runTaskLater(AxescodePlugin.inst(),
-                        () -> ui.openUI((Player) e.getPlayer()), 1L);
-            });
-            ui.setOnPlayerClose(e -> {
-                e.getPlayer().sendMessage("cannot close");
-                AxescodePlugin.inst().getServer().getScheduler().runTaskLater(AxescodePlugin.inst(),
-                        () -> ui.openUI((Player) e.getPlayer()), 1L);
-            });
-
-            ui.setSlot(4, 1, slot -> {
-                slot.setItem(new ItemStack(Material.PAPER));
-                slot.setOnClick(e -> {
-                    e.getWhoClicked().closeInventory();
-                    e.getWhoClicked().sendMessage("escaped!");
-                });
-            });
-        });
-    }
-
-    public static UITemplate getUI(String key) {
-        return uiContainer.get(key);
-    }
-
-    public static List<String> getAllUINames() {
-        return uiContainer.keySet().stream().toList();
-    }
-
-    public static void registerUI(String key, int lines, Consumer<UITemplate> consumer) {
-        UITemplateImpl ui = new UITemplateImpl(lines);
-        consumer.accept(ui);
-        uiContainer.put(key, ui);
-    }
-
-    public static UITemplate createUI(int lines, Consumer<UITemplate> consumer) {
-        UITemplateImpl ui = new UITemplateImpl(lines);
+    /**
+     * {@link SquareUI}을 구현합니다.
+     *
+     * @param lines y축 슬롯 개수
+     * @param consumer 초기 설정
+     * @return 만들어진 {@link SquareUI}
+     */
+    public static SquareUI createSquareUI(int lines, Consumer<SquareUI> consumer) {
+        SquareUIImpl ui = new SquareUIImpl(lines);
         consumer.accept(ui);
         return ui;
     }
 
-    public static UITemplate createUI(int lines, Component title, Consumer<UITemplate> consumer) {
-        UITemplateImpl ui = new UITemplateImpl(lines, title);
+    /**
+     * {@link SquareUI}을 구현합니다.
+     *
+     * @param lines y축 슬롯 개수
+     * @param consumer 초기 설정
+     * @param title 초기 설정
+     * @return 만들어진 {@link SquareUI}
+     */
+    public static SquareUI createSquareUI(int lines, Component title, Consumer<SquareUI> consumer) {
+        SquareUIImpl ui = new SquareUIImpl(lines, title);
+        consumer.accept(ui);
+        return ui;
+    }
+
+    /**
+     * {@link UI}을 구현합니다.
+     *
+     * @param inventoryType 인벤토리 타입
+     * @param consumer 초기 설정
+     * @return 만들어진 {@link UI}
+     */
+    public static UI createUI(InventoryType inventoryType, Consumer<UI> consumer) {
+        DynamicUI ui = new DynamicUI(inventoryType);
         consumer.accept(ui);
         return ui;
     }

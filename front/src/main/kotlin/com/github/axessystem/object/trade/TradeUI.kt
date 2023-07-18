@@ -7,9 +7,10 @@ import com.github.axescode.util.Sounds
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
-import com.github.axescode.core.ui.template.UITemplate
+import com.github.axescode.core.ui.template.UI
 import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.util.Items
+import dev.lone.itemsadder.api.FontImages.FontImageWrapper
+import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.*
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -65,19 +66,21 @@ class TradeUI(
         pluginScope.async {
             delay(50L)
             viewer.sendMessage("거래가 끝나기 전까지 창을 닫을 수 없습니다. 거래를 종료하시려면 X 버튼을 클릭해주세요.")
-            ui.openUI(viewer.player)
+            openUI()
         }
     }
 
     override fun openUI() {
         ui.openUI(viewer.player)
+        TexturedInventoryWrapper.setPlayerInventoryTexture(viewer.player, FontImageWrapper("axescode:trade"), "", 16, -9)
     }
 
-    private val ui: UITemplate = UITemplates.createUI(6) { ui ->
-        ui.setSlot(0, 0) { it.item = infoIcon }
+    private val ui: UI = UITemplates.createSquareUI(5) { ui ->
+        ui.setSlot(3, 4) { it.item = infoIcon }
         ui.setSlot(2, 0) { it.item = acceptorHead }
         ui.setSlot(6, 0) { it.item = requesterHead }
-        ui.setSlot(8, 0) {
+
+        ui.setSlot(if(viewer == tradeData.acceptor) 0 else 8, 3) {
             it.item = cancelIcon
             it.setOnClick {
                 viewer.player.playSound(Sounds.click)
@@ -100,7 +103,7 @@ class TradeUI(
         ui.setOnPlayerClose { if (tradeData.tradeState == TradeState.PROCEED) lazyReOpen() }
         ui.setOnElseClose {
             viewer.sendMessage("거래가 중지되었습니다.")
-            if (tradeData.acceptor !== viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
+            if (tradeData.acceptor != viewer) tradeData.acceptor.sendMessage("상대가 거래를 종료하였습니다.")
             else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
             tradeData.lazyRollback()
         }
@@ -120,10 +123,11 @@ class TradeUI(
 
         //열 때마다 갱신
         ui.setOnOpen {
-            ui.setSlot(3, 0) { slot ->
+            //상태 업데이트
+            ui.setSlot(0, 2) { slot ->
                 slot.item = getDecisionIcon(tradeData.acceptor.decision)
             }
-            ui.setSlot(7, 0) { slot ->
+            ui.setSlot(8, 2) { slot ->
                 slot.item = getDecisionIcon(tradeData.requester.decision)
             }
 

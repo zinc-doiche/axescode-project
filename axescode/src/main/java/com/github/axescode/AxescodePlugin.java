@@ -25,7 +25,6 @@ public class AxescodePlugin extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         MybatisConfig.init();
-        UITemplates.init();
 
         registerAllListeners(
                 new ServerListener(),

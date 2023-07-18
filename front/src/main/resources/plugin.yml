@@ -8,6 +8,9 @@ libraries:
 depend:
   - Axescode-Core
 commands:
+  showui:
+    description: debug tool for ui test
+
   trade:
     description: "asd"
   generator:
