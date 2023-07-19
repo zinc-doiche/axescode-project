@@ -1,7 +1,7 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.inventory.ui;
 
-import com.github.axescode.core.ui.slot.SquareSlot;
-import com.github.axescode.core.ui.slot.SquareSlotImpl;
+import com.github.axescode.inventory.slot.SquareSlot;
+import com.github.axescode.inventory.slot.SquareSlotImpl;
 import com.github.axescode.util.Items;
 import com.github.axescode.util.Tuple;
 import net.kyori.adventure.text.Component;

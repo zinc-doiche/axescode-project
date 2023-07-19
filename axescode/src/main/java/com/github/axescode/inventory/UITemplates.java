@@ -1,6 +1,6 @@
-package com.github.axescode.core.ui;
+package com.github.axescode.inventory;
 
-import com.github.axescode.core.ui.template.*;
+import com.github.axescode.inventory.ui.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;

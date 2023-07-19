@@ -1,6 +1,6 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.inventory.ui;
 
-import com.github.axescode.core.ui.slot.SquareSlot;
+import com.github.axescode.inventory.slot.SquareSlot;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.function.Consumer;
@@ -13,4 +13,5 @@ public interface SquareUI extends UI{
     void setSlot(int x, int y, Consumer<SquareSlot> consumer);
     void removeSlot(int x, int y);
     int getLines();
+    SquareUI clone();
 }

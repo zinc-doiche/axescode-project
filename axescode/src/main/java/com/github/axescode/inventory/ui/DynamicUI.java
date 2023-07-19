@@ -1,6 +1,6 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.inventory.ui;
 
-import com.github.axescode.core.ui.slot.Slot;
+import com.github.axescode.inventory.slot.Slot;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
@@ -16,4 +16,6 @@ public interface DynamicUI extends UI{
     Slot getSlot(int slot);
     void setSlot(int slot, Consumer<Slot> setSlot);
     void removeSlot(int slot);
+
+    DynamicUI clone();
 }

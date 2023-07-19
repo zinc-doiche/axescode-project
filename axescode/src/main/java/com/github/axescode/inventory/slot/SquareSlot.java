@@ -1,4 +1,4 @@
-package com.github.axescode.core.ui.slot;
+package com.github.axescode.inventory.slot;
 
 public interface SquareSlot extends Slot{
     Integer getX();

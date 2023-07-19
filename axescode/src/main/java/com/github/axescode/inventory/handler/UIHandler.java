@@ -1,6 +1,6 @@
-package com.github.axescode.core.ui;
+package com.github.axescode.inventory.handler;
 
-import com.github.axescode.core.ui.template.UI;
+import com.github.axescode.inventory.ui.UI;
 import org.bukkit.entity.Player;
 
 /**

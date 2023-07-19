@@ -1,4 +1,4 @@
-package com.github.axescode.core.ui.slot;
+package com.github.axescode.inventory.slot;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

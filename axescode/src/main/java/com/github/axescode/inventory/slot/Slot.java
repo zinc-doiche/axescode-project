@@ -1,6 +1,6 @@
-package com.github.axescode.core.ui.slot;
+package com.github.axescode.inventory.slot;
 
-import com.github.axescode.core.ui.template.UI;
+import com.github.axescode.inventory.ui.UI;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 

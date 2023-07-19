@@ -1,7 +1,7 @@
 package com.github.axessystem.`object`.menu
 
-import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.template.UI
+import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.ui.UI
 import com.github.axessystem.util.text
 import org.bukkit.entity.Player
 

@@ -1,12 +1,14 @@
-package com.github.axescode.core.ui;
+package com.github.axescode.inventory.handler;
 
-import com.github.axescode.core.ui.template.UI;
+import com.github.axescode.inventory.ui.UI;
+import com.github.axescode.inventory.handler.UIHandler;
+import org.bukkit.entity.Player;
 
 /**
  * {@link UI}를 보고 있는 플레이어를 나타냅니다.
  */
 public interface Viewer {
-    //Player getPlayer();
+    Player getPlayer();
     UIHandler getHandler();
 
     /**

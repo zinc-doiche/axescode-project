@@ -1,4 +1,4 @@
-package com.github.axescode.front.listener;
+package com.github.axescode.listener;
 
 import com.github.axescode.container.Containers;
 import com.github.axescode.core.player.PlayerDAO;

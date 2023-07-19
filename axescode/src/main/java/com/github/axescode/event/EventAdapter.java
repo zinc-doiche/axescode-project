@@ -1,4 +1,4 @@
-package com.github.axescode.front.event;
+package com.github.axescode.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

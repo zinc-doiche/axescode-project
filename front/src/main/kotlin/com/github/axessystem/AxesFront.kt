@@ -2,7 +2,7 @@ package com.github.axessystem
 
 import com.github.axescode.container.Containers
 import com.github.axescode.core.player.PlayerData
-import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.inventory.UITemplates
 import com.github.axescode.util.Items
 import com.github.axessystem.`object`.generator.BlockGenerator
 import com.github.axessystem.listener.PlayerListener
@@ -135,10 +135,10 @@ class AxesFront: JavaPlugin() {
 //                        TradeDAO.use { dao ->
 //                            useOutputStream { bs, os ->
 //                                repeat(10) { i ->
-//                                    player.sendMessage(i.toString())
-//                                    os.writeItem(player.inventory.itemInMainHand)
+//                                    playerEntity.sendMessage(i.toString())
+//                                    os.writeItem(playerEntity.inventory.itemInMainHand)
 //                                    TradeItemVO.builder()
-//                                        .playerId(Containers.getPlayerDataContainer().getData(player.name).playerId)
+//                                        .playerId(Containers.getPlayerDataContainer().getData(playerEntity.name).playerId)
 //                                        .tradeId(1)
 //                                        .tradeItem(bs.encodedItem)
 //                                        .build()
@@ -153,15 +153,15 @@ class AxesFront: JavaPlugin() {
 //                executes {
 //                    pluginScope.async {
 //                        TradeDAO.use { dao ->
-//                            Items.addItem(player, *dao.findAllById(1).map { Base64.getDecoder().decodeAsItem(it.tradeItem)!! }.toTypedArray())
+//                            Items.addItem(playerEntity, *dao.findAllById(1).map { Base64.getDecoder().decodeAsItem(it.tradeItem)!! }.toTypedArray())
 //                        }
 //                    }
 //                }
 //            }
 //        }
 //        register("axesdebug") {
-//            requires { player.isOp }
-//            executes { player.sendMessage(player.inventory.itemInMainHand.toString()) }
+//            requires { playerEntity.isOp }
+//            executes { playerEntity.sendMessage(playerEntity.inventory.itemInMainHand.toString()) }
 //        }
 //        }
     }

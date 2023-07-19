@@ -6,12 +6,10 @@ import com.github.axescode.core.trade.TradeVO
 import com.github.axessystem.util.encodedItem
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
-import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.inventory.UITemplates
 import com.github.axescode.util.Items
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.Lockable
-import dev.lone.itemsadder.api.FontImages.FontImageWrapper
-import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.async
 
 /**

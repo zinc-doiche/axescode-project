@@ -1,8 +1,8 @@
 package com.github.axessystem.`object`.ui
 
-import com.github.axescode.core.ui.UIHandler
-import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.template.UI
+import com.github.axescode.inventory.handler.UIHandler
+import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.ui.UI
 import org.bukkit.event.inventory.InventoryType
 
 class InputUI: UIHandler {

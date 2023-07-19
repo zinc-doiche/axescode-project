@@ -1,4 +1,4 @@
-package com.github.axescode.core.ui.slot;
+package com.github.axescode.inventory.slot;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.inventory.InventoryClickEvent;

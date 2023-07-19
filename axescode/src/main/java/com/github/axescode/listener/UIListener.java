@@ -1,9 +1,9 @@
-package com.github.axescode.front.listener;
+package com.github.axescode.listener;
 
-import com.github.axescode.core.ui.slot.SquareSlot;
-import com.github.axescode.core.ui.template.SquareUI;
-import com.github.axescode.core.ui.template.UI;
-import com.github.axescode.core.ui.UITemplates;
+import com.github.axescode.inventory.slot.SquareSlot;
+import com.github.axescode.inventory.ui.SquareUI;
+import com.github.axescode.inventory.ui.UI;
+import com.github.axescode.inventory.UITemplates;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

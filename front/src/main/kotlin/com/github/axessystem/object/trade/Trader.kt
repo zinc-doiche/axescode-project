@@ -1,7 +1,7 @@
 package com.github.axessystem.`object`.trade
 
 import com.github.axescode.core.player.PlayerData
-import com.github.axescode.core.ui.Viewer
+import com.github.axescode.inventory.handler.Viewer
 import com.github.axescode.util.Items
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -17,12 +17,12 @@ data class Trader(
     var tradeUI: TradeUI? = null
     var decision: Decision = Decision.NOT_READY
 
-    val player: Player = playerData.playerEntity
-
     /**
      * [Inventory] 컬렉션화에서의 Null / AIR 제거
      */
     fun getItems(): List<ItemStack> = tradeItems.toList().filter { !Items.isNullOrAir(it) }
+
+    override fun getPlayer(): Player = playerData.playerEntity
     override fun openUI() { tradeUI?.openUI() }
     override fun closeUI() { player.closeInventory() }
     override fun getHandler(): TradeUI? = tradeUI

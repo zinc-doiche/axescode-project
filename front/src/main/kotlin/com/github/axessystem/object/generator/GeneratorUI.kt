@@ -1,8 +1,8 @@
 package com.github.axessystem.`object`.generator
 
-import com.github.axescode.core.ui.UIHandler
-import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.template.UI
+import com.github.axescode.inventory.handler.UIHandler
+import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.ui.UI
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.getCustomItem
 import com.github.axescode.util.Items.item
@@ -20,19 +20,15 @@ class GeneratorUI(
         private val rightBtn = getCustomItem(Material.PAPER, text("다음"), 10006) {}
     }
 
-    var idx = 0
-    val pagination: Pagination<BlockGeneratorData>
-        get() {
-            val sortedList = BlockGeneratorData.getAllData
-                .filter { data -> data.location.world == viewer.player.world }
-                .sortedBy { data -> data.generator.generatorName }
-
-            return Pagination(sortedList, 45)
-        }
+    private var idx = 0
+    private val pagination: Pagination<BlockGeneratorData>
+        get() = Pagination(BlockGeneratorData.getAllData
+                        .filter { it.location.world == viewer.player.world }
+                        .sortedBy { it.generator.generatorName }, 45)
 
     override fun openUI() { ui.openUI(viewer.player) }
 
-    val ui: UI = UITemplates.createSquareUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
+    private val ui: UI = UITemplates.createSquareUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
         ui.setOnOpen {
             info("open")
             repeat(45) { i ->

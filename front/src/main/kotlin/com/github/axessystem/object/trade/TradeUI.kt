@@ -1,14 +1,14 @@
 package com.github.axessystem.`object`.trade
 
-import com.github.axescode.core.ui.UIHandler
+import com.github.axescode.inventory.handler.UIHandler
 import com.github.axescode.util.Colors
 import com.github.axescode.util.Items.*
 import com.github.axescode.util.Sounds
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
-import com.github.axescode.core.ui.template.UI
-import com.github.axescode.core.ui.UITemplates
+import com.github.axescode.inventory.ui.UI
+import com.github.axescode.inventory.UITemplates
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.*

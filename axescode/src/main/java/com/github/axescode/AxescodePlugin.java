@@ -1,9 +1,8 @@
 package com.github.axescode;
 
-import com.github.axescode.core.ui.UITemplates;
-import com.github.axescode.front.listener.PlayerListener;
-import com.github.axescode.front.listener.ServerListener;
-import com.github.axescode.front.listener.UIListener;
+import com.github.axescode.listener.PlayerListener;
+import com.github.axescode.listener.ServerListener;
+import com.github.axescode.listener.UIListener;
 import com.github.axescode.mybatis.MybatisConfig;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;

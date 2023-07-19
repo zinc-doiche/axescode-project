@@ -1,4 +1,4 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.inventory.ui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

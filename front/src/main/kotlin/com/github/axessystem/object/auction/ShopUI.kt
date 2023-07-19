@@ -1,8 +1,8 @@
-package com.github.axessystem.`object`.shop
+package com.github.axessystem.`object`.auction
 
-import com.github.axescode.core.ui.UIHandler
-import com.github.axescode.core.ui.UITemplates
-import com.github.axescode.core.ui.template.UI
+import com.github.axescode.inventory.handler.UIHandler
+import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.ui.UI
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack

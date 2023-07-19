@@ -1,7 +1,7 @@
-package com.github.axescode.core.ui.template;
+package com.github.axescode.inventory.ui;
 
-import com.github.axescode.core.ui.slot.Slot;
-import com.github.axescode.core.ui.slot.SlotImpl;
+import com.github.axescode.inventory.slot.Slot;
+import com.github.axescode.inventory.slot.SlotImpl;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
