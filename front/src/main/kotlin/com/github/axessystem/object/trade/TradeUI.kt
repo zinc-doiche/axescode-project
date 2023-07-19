@@ -10,7 +10,6 @@ import com.github.axessystem.util.texts
 import com.github.axescode.inventory.ui.UI
 import com.github.axescode.inventory.UITemplates
 import com.github.axescode.inventory.slot.SquareSlot
-import com.github.axescode.inventory.template.InputUI
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.*
@@ -67,11 +66,8 @@ class TradeUI(
     }
     private val requesterMoney: ItemStack = item(Material.PAPER, text("0 시즈"))
 
-    private val inputUI: UIHandler = InputUI(viewer, this).apply {
-    }
-
     // 거래 종료 전까지 UI 띄우는 루틴
-    private fun lazyReOpen() {
+    fun lazyReOpen() {
         pluginScope.async {
             delay(50L)
             viewer.sendMessage("거래가 끝나기 전까지 창을 닫을 수 없습니다. 거래를 종료하시려면 X 버튼을 클릭해주세요.")
@@ -140,7 +136,6 @@ class TradeUI(
                     else tradeData.requester.sendMessage("상대가 거래를 종료하였습니다.")
                     tradeData.lazyRollback()
                 }
-
                 TradeState.SUCCESS -> tradeData.lazySave()
             }
         }
@@ -149,17 +144,19 @@ class TradeUI(
         ui.setOnOpen {
             //상태 업데이트
             ui.setSlot(0, 2) { it.item = getDecisionIcon(tradeData.acceptor.decision) }
-            ui.setSlot(8, 2) { it.item = getDecisionIcon(tradeData.requester.decision)
-            }
+            ui.setSlot(8, 2) { it.item = getDecisionIcon(tradeData.requester.decision) }
+
+            //money
             ui.setSlot(0, 1) { slot ->
                 slot.item = acceptorMoney
                 if(viewer == tradeData.acceptor)
-                    slot.setOnClick { inputUI.openUI() }
+                    slot.setOnClick { viewer.inputUI?.openUI() }
             }
+            //money
             ui.setSlot(8, 1) { slot ->
                 slot.item = requesterMoney
-                if(viewer == tradeData.requester)
-                    slot.setOnClick { inputUI.openUI() }
+                if(viewer != tradeData.acceptor)
+                    slot.setOnClick { viewer.inputUI?.openUI() }
             }
 
             // READY로 상태전환

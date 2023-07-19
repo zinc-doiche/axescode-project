@@ -1,6 +1,9 @@
 package com.github.axescode.listener;
 
+import com.github.axescode.AxescodePlugin;
+import com.github.axescode.inventory.slot.Slot;
 import com.github.axescode.inventory.slot.SquareSlot;
+import com.github.axescode.inventory.ui.DynamicUI;
 import com.github.axescode.inventory.ui.SquareUI;
 import com.github.axescode.inventory.ui.UI;
 import com.github.axescode.inventory.UITemplates;
@@ -17,7 +20,7 @@ public class UIListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        UI ui; SquareSlot squareSlot;
+        UI ui; Slot slot;
 
         // 지정한 UI가 아닐 경우 제외
         if(!(inventory.getHolder() instanceof UI)) return;
@@ -25,27 +28,36 @@ public class UIListener implements Listener {
         event.setCancelled(true);
         ui = (UI) inventory.getHolder();
 
-        //Square가 아니면:
-        if(!(ui instanceof SquareUI)) {
+        //Dynamic:
+        if(ui instanceof DynamicUI dynamicUI) {
+            if(event.getRawSlot() > dynamicUI.getLastSlot()) {
+                // Bottom Click
+                if(ui.getOnClickBottom() == null) return;
+                ui.getOnClickBottom().accept(event);
+                return;
+            }
+            // else UI Click
+            slot = dynamicUI.getSlot(event.getRawSlot());
 
-
+            if(slot == null || slot.getOnClick() == null) return;
+            slot.getOnClick().accept(event);
             return;
         }
-
-        //Square가 맞으면:
-        SquareUI squareUI = (SquareUI) ui;
-
-        if(squareUI.getLines() * 9 <= event.getRawSlot()) {
-            // Bottom Click
-            if(ui.getOnClickBottom() == null) return;
-            ui.getOnClickBottom().accept(event);
-        } else {
-            // UI Click
+        //Square:
+        if(ui instanceof SquareUI squareUI) {
+            if (squareUI.getLines() * 9 <= event.getRawSlot()) {
+                // Bottom Click
+                if (ui.getOnClickBottom() == null) return;
+                ui.getOnClickBottom().accept(event);
+                return;
+            }
+            // else UI Click
             int x = event.getRawSlot() % 9, y = event.getRawSlot() / 9;
-            squareSlot = squareUI.getSlotAt(x, y);
+            slot = squareUI.getSlotAt(x, y);
 
-            if(squareSlot == null || squareSlot.getOnClick() == null) return;
-            squareSlot.getOnClick().accept(event);
+            if (slot == null || slot.getOnClick() == null) return;
+            slot.getOnClick().accept(event);
+            return;
         }
     }
 
