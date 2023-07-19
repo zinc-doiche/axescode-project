@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class DynamicUIImpl implements DynamicUI, Cloneable {
     private final int lastSlot;
@@ -66,7 +67,7 @@ public class DynamicUIImpl implements DynamicUI, Cloneable {
     }
 
     @Override
-    public void setSlot(int slot, Consumer<Slot> setSlot) {
+    public void setSlot(int slot, @NotNull Consumer<Slot> setSlot) {
         Slot slotImpl = new SlotImpl();
         setSlot.accept(slotImpl);
         inventory.setItem(slot, slotImpl.getItem());
@@ -97,5 +98,15 @@ public class DynamicUIImpl implements DynamicUI, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public DynamicUI apply(@NotNull Function<DynamicUI, DynamicUI> function) {
+        return function.apply(clone());
+    }
+
+    @Override
+    public void apply(Consumer<DynamicUI> consumer) {
+        consumer.accept(clone());
     }
 }

@@ -9,6 +9,8 @@ import com.github.axessystem.util.text
 import com.github.axessystem.util.texts
 import com.github.axescode.inventory.ui.UI
 import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.slot.SquareSlot
+import com.github.axescode.inventory.template.InputUI
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
 import dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 import kotlinx.coroutines.*
@@ -22,6 +24,8 @@ class TradeUI(
     private val viewer: Trader
 ): UIHandler {
     companion object {
+        private val tradeGUI = FontImageWrapper("axescode:trade")
+
         private val infoIcon: ItemStack = getCustomItem(Material.PAPER, text("도움말").decoration(TextDecoration.BOLD, true), 10002) { meta ->
             meta.lore(texts("", "   - SHIFT + 클릭 : 세트 단위로 등록 / 회수", "   - 일반 클릭 : 1개 단위로 등록 / 회수"))
         }
@@ -54,11 +58,16 @@ class TradeUI(
         meta.owningPlayer = tradeData.acceptor.player
         meta.displayName(text(tradeData.acceptor.player.name).color(Colors.gold))
     }
+    private val acceptorMoney: ItemStack = item(Material.PAPER, text("0 시즈"))
 
     private val requesterHead: ItemStack = item(Material.PLAYER_HEAD) { meta ->
         meta as SkullMeta
         meta.owningPlayer = tradeData.requester.player
         meta.displayName(text(tradeData.requester.player.name).color(Colors.gold))
+    }
+    private val requesterMoney: ItemStack = item(Material.PAPER, text("0 시즈"))
+
+    private val inputUI: UIHandler = InputUI(viewer, this).apply {
     }
 
     // 거래 종료 전까지 UI 띄우는 루틴
@@ -70,9 +79,24 @@ class TradeUI(
         }
     }
 
+    //클릭시 아이템 등록 해제
+    private fun SquareSlot.unregisterItems(rx: Int, ry: Int, i: Int,trader: Trader) {
+        item = trader.getItems()[i]
+        if (trader != viewer || viewer.decision != Decision.NOT_READY) return
+
+        setOnClick { e ->
+            if (isNullOrAir(e.currentItem)) return@setOnClick
+            viewer.player.playSound(Sounds.click)
+            viewer.unregisterItem(rx, ry, e.currentItem!!, e.isShiftClick)
+
+            //update
+            tradeData.openAll()
+        }
+    }
+
     override fun openUI() {
         ui.openUI(viewer.player)
-        TexturedInventoryWrapper.setPlayerInventoryTexture(viewer.player, FontImageWrapper("axescode:trade"), "", 16, -9)
+        TexturedInventoryWrapper.setPlayerInventoryTexture(viewer.player, tradeGUI, "", 16, -9)
     }
 
     private val ui: UI = UITemplates.createSquareUI(5) { ui ->
@@ -124,11 +148,18 @@ class TradeUI(
         //열 때마다 갱신
         ui.setOnOpen {
             //상태 업데이트
-            ui.setSlot(0, 2) { slot ->
-                slot.item = getDecisionIcon(tradeData.acceptor.decision)
+            ui.setSlot(0, 2) { it.item = getDecisionIcon(tradeData.acceptor.decision) }
+            ui.setSlot(8, 2) { it.item = getDecisionIcon(tradeData.requester.decision)
             }
-            ui.setSlot(8, 2) { slot ->
-                slot.item = getDecisionIcon(tradeData.requester.decision)
+            ui.setSlot(0, 1) { slot ->
+                slot.item = acceptorMoney
+                if(viewer == tradeData.acceptor)
+                    slot.setOnClick { inputUI.openUI() }
+            }
+            ui.setSlot(8, 1) { slot ->
+                slot.item = requesterMoney
+                if(viewer == tradeData.requester)
+                    slot.setOnClick { inputUI.openUI() }
             }
 
             // READY로 상태전환
@@ -153,6 +184,9 @@ class TradeUI(
                         viewer.player.playSound(Sounds.click)
                         viewer.decision = Decision.CONFIRM
 
+                        //update
+                        tradeData.openAll()
+
                         // 양쪽 모두 승낙시 거래 진행
                         if (tradeData.isAllConfirmed) {
                             tradeData.successTrade()
@@ -171,43 +205,20 @@ class TradeUI(
 
             //거래 아이템 채우기
             repeat(9) { i ->
-                val x = i % 3; val y = i / 3
+                val rx = i % 3
+                val ry = i / 3
 
                 //아이템이 있는 만큼만 repeat
-                if (tradeData.acceptor.getItems().size > i) {
-                    ui.setSlot(x + 1, y + 1) {
-                        it.item = tradeData.acceptor.getItems()[i]
-                        if (tradeData.acceptor != viewer || viewer.decision != Decision.NOT_READY) return@setSlot
-
-                        // 아이템 등록 해제
-                        it.setOnClick { e ->
-                            if (isNullOrAir(e.currentItem)) return@setOnClick
-                            viewer.player.playSound(Sounds.click)
-                            viewer.unregisterItem(x, y, e.currentItem!!, e.isShiftClick)
-
-                            //update
-                            tradeData.openAll()
-                        }
-                    }
-                } else ui.removeSlot(x + 1, y + 1)
+                if (tradeData.acceptor.getItems().size > i)
+                    ui.setSlot(rx + 1, ry + 1) { it.unregisterItems(rx, ry, i, tradeData.requester) }
+                else
+                    ui.removeSlot(rx + 1, ry + 1)
 
                 //아이템이 있는 만큼만 repeat 2222
-                if (tradeData.requester.getItems().size > i) {
-                    ui.setSlot(x + 5, y + 1) {
-                        it.item = tradeData.requester.getItems()[i]
-                        if (tradeData.requester != viewer || viewer.decision != Decision.NOT_READY) return@setSlot
-
-                        // 아이템 등록 해제
-                        it.setOnClick { e ->
-                            if (isNullOrAir(e.currentItem)) return@setOnClick
-                            viewer.player.playSound(Sounds.click)
-                            viewer.unregisterItem(x, y, e.currentItem!!, e.isShiftClick)
-
-                            //update
-                            tradeData.openAll()
-                        }
-                    }
-                } else ui.removeSlot(x + 5, y + 1)
+                if (tradeData.requester.getItems().size > i)
+                    ui.setSlot(rx + 5, ry + 1) { it.unregisterItems(rx, ry, i, tradeData.requester) }
+                else
+                    ui.removeSlot(rx + 5, ry + 1)
             }
         }
     }

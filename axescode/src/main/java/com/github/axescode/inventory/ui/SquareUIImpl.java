@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class SquareUIImpl implements SquareUI, Cloneable {
     private final int lines;
@@ -138,5 +139,15 @@ public class SquareUIImpl implements SquareUI, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public SquareUI apply(Function<SquareUI, SquareUI> function) {
+        return function.apply(clone());
+    }
+
+    @Override
+    public void apply(Consumer<SquareUI> consumer) {
+        consumer.accept(clone());
     }
 }
