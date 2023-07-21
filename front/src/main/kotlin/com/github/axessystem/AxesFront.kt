@@ -9,7 +9,6 @@ import com.github.axessystem.listener.PlayerListener
 import com.github.axessystem.listener.ServerListener
 import com.github.axessystem.`object`.generator.BlockGeneratorData
 import com.github.axessystem.`object`.generator.GeneratorUI
-import com.github.axessystem.`object`.generator.GeneratorViewer
 import com.github.axessystem.`object`.trade.TradeData
 import com.github.axessystem.`object`.trade.Trader
 import dev.lone.itemsadder.api.FontImages.FontImageWrapper
@@ -108,8 +107,7 @@ class AxesFront: JavaPlugin() {
             when(args.size) {
                 1 -> when(args[0]) {
                     "manage" -> {
-                        val viewer = GeneratorViewer(player)
-                        GeneratorUI(viewer).openUI()
+                        GeneratorUI(player).openUI()
                     }
                 }
                 2 -> when(args[0]) {

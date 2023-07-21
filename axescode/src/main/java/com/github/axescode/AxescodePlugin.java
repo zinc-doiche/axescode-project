@@ -3,6 +3,7 @@ package com.github.axescode;
 import com.github.axescode.listener.PlayerListener;
 import com.github.axescode.listener.ServerListener;
 import com.github.axescode.listener.UIListener;
+import com.github.axescode.mybatis.HikariDataSourceFactory;
 import com.github.axescode.mybatis.MybatisConfig;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -35,6 +36,7 @@ public class AxescodePlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         plugin.getServer().getOnlinePlayers().forEach(Player::kick);
+        HikariDataSourceFactory.closeDataSource();
     }
 
     private void registerAllListeners(Listener... listeners) {

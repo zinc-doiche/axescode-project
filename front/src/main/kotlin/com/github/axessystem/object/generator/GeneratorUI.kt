@@ -11,9 +11,10 @@ import com.github.axessystem.`object`.ui.Pagination
 import com.github.axessystem.util.text
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
+import org.bukkit.entity.Player
 
 class GeneratorUI(
-    private val viewer: GeneratorViewer
+    private val player: Player
 ): UIHandler {
     companion object {
         private val leftBtn = getCustomItem(Material.PAPER, text("이전"), 10005) {}
@@ -23,10 +24,10 @@ class GeneratorUI(
     private var idx = 0
     private val pagination: Pagination<BlockGeneratorData>
         get() = Pagination(BlockGeneratorData.getAllData
-                        .filter { it.location.world == viewer.player.world }
+                        .filter { it.location.world == player.world }
                         .sortedBy { it.generator.generatorName }, 45)
 
-    override fun openUI() { ui.openUI(viewer.player) }
+    override fun openUI() { ui.openUI(player) }
 
     private val ui: UI = UITemplates.createSquareUI(6, text("생성기 관리메뉴").decoration(TextDecoration.BOLD, true)) { ui ->
         ui.setOnOpen {
@@ -48,7 +49,7 @@ class GeneratorUI(
                             })
                         }
                     }
-                    slot.setOnClick { viewer.player.teleportAsync(data.location) }
+                    slot.setOnClick { player.teleportAsync(data.location) }
                 }
             }
 
@@ -59,8 +60,9 @@ class GeneratorUI(
                     slot.item = leftBtn
                     slot.setOnClick {
                         idx--
+
                         //update
-                        viewer.openUI()
+                        openUI()
                     }
                 }
             }
@@ -69,8 +71,9 @@ class GeneratorUI(
                     slot.item = rightBtn
                     slot.setOnClick {
                         idx++
+
                         //update
-                        viewer.openUI()
+                        openUI()
                     }
                 }
             }

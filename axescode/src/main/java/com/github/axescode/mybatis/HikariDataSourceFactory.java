@@ -29,4 +29,8 @@ public class HikariDataSourceFactory implements DataSourceFactory {
     public DataSource getDataSource() {
         return dataSource;
     }
+
+    public static void closeDataSource() {
+        dataSource.close();
+    }
 }
