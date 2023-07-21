@@ -6,14 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -53,9 +51,10 @@ public class CommandBuilder {
                 for (String arg : args) {
                     if (finalNode.getChildren().get(arg) != null) {
                         finalNode = finalNode.getChildren().get(arg);
-                        continue;
                     }
-                    if (finalNode.getParameters() != null && finalNode.getFinalDepth() == args.length - 1) {
+                    //final node
+                    else if (finalNode.getParameters() != null && finalNode.getFinalDepth() == args.length - 1 &&
+                                    finalNode.isDeserved()) {
                         return finalNode.getOnExecute().apply(sender, args);
                     }
                 }
@@ -69,6 +68,29 @@ public class CommandBuilder {
                     @NotNull CommandSender sender, @NotNull Command command,
                     @NotNull String label, @NotNull String[] args
             ) {
+                List<String> list = new ArrayList<>();
+                Node finalNode = builder.startNode;
+                // 1 2 3 4 5 : length
+                // 0 1 2 3 4 : idx == depth
+                //tp p x y z : args
+                // _ f 0 1 2 : param idx
+                //depth == i
+                for (String arg : args) {
+                    if (finalNode.getChildren().get(arg) != null) {
+                        finalNode = finalNode.getChildren().get(arg);
+
+                        return StringUtil.copyPartialMatches(arg, finalNode.getNextArgs(), list);
+                    }
+                    //final node
+                    else if (finalNode.getParameters() != null) {
+                        int paramIdx = args.length - finalNode.getDepth() - 2;
+                        String parameter = finalNode.getParameters()[paramIdx];
+
+                        return StringUtil.copyPartialMatches(arg, Collections.singletonList(parameter), list);
+                    }
+                }
+
+                //unreached
                 return null;
             }
         });
