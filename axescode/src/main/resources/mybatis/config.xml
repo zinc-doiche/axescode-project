@@ -40,7 +40,7 @@
         <mapper resource="mybatis/mapper/playerMapper.xml"/>
         <mapper resource="mybatis/mapper/placedGeneratorMapper.xml"/>
         <mapper resource="mybatis/mapper/tradeMapper.xml"/>
-        <mapper resource="mybatis/mapper/shopItemMapper.xml"/>
+        <mapper resource="mybatis/mapper/auctionItemMapper.xml"/>
     </mappers>
 
 </configuration>

@@ -1,8 +1,14 @@
 package com.github.axessystem.`object`.trade
 
 import com.github.axescode.core.player.PlayerData
+import com.github.axescode.inventory.handler.UIHandler
 import com.github.axescode.inventory.handler.Viewer
+import com.github.axescode.inventory.template.InputUI
 import com.github.axescode.util.Items
+import com.github.axessystem.info
+import com.github.axessystem.pluginScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -15,6 +21,20 @@ data class Trader(
 ): Viewer {
     val tradeItems: Inventory = Bukkit.createInventory(null, InventoryType.DISPENSER)
     var tradeUI: TradeUI? = null
+        set(value) {
+            if(field != null) return
+
+            inputUI = InputUI(this, value).apply {
+                ui.setOnPlayerClose {
+                    pluginScope.async {value?.lazyReOpen()}
+                }
+            }
+            field = value
+        }
+
+    var inputUI: UIHandler? = null
+        private set
+
     var decision: Decision = Decision.NOT_READY
 
     /**

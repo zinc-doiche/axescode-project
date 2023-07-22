@@ -7,6 +7,8 @@ import com.github.axessystem.util.encodedItem
 import com.github.axessystem.util.useOutputStream
 import com.github.axessystem.util.writeItem
 import com.github.axescode.inventory.UITemplates
+import com.github.axescode.inventory.handler.UIHandler
+import com.github.axescode.inventory.template.InputUI
 import com.github.axescode.util.Items
 import com.github.axessystem.pluginScope
 import com.github.axessystem.util.Lockable
