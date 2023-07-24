@@ -10,6 +10,7 @@ import com.github.axescode.util.Transactional;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
     private final PlayerMapper mapper = sqlSession.getMapper(PlayerMapper.class);
@@ -56,6 +57,13 @@ public class PlayerDAO extends AbstractDAO<PlayerDAO> implements Transactional {
         PlayerDAO dao = new PlayerDAO();
         consumer.accept(dao);
         dao.close();
+    }
+
+    public static Object useReturn(Function<PlayerDAO, Object> function) {
+        PlayerDAO dao = new PlayerDAO();
+        Object obj = function.apply(dao);
+        dao.close();
+        return obj;
     }
 
     public static void useTransaction(Consumer<PlayerDAO> consumer) {

@@ -3,5 +3,37 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.axescode.mybatis.mapper.AuctionItemMapper">
+    <insert id="insert" keyProperty="auctionItemId" keyColumn="auction_item_id" useGeneratedKeys="true">
+        insert into tbl_auction_item(
+            player_id, auction_item_name, auction_item_origin_name, auction_item, auction_item_price,
+            auction_item_stock
+        ) values (
+            #{playerId}, #{auctionItemName}, #{auctionItemOriginName}, #{auctionItem}, #{auctionItemPrice},
+            #{auctionItemStock}
+        )
+    </insert>
+    <select id="selectAll" resultType="auctionItemVO">
+        select auction_item_id, player_id, auction_item_name, auction_item_origin_name,
+                auction_item, auction_item_price, auction_item_stock
+        from tbl_auction_item
+        where
+        <trim prefixOverrides="and">
+            <if test="keyword != null">
+                (auction_item_name like '%#{keyword}%')
+                or (auction_item_origin_name like '%#{keyword}%')
+            </if>
+            <if test="playerId != null">
+                and player_id = #{playerId}
+            </if>
+        </trim>
+        <if test="start != null and end != null">
+            limit start end
+        </if>
+    </select>
+    <!--<update id="modify">
 
+    </update>
+    <delete id="remove">
+
+    </delete>-->
 </mapper>

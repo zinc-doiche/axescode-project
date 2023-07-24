@@ -1,10 +1,13 @@
 package com.github.axescode;
 
+import com.github.axescode.command.CommandBuilder;
 import com.github.axescode.listener.PlayerListener;
 import com.github.axescode.listener.ServerListener;
 import com.github.axescode.listener.UIListener;
 import com.github.axescode.mybatis.HikariDataSourceFactory;
 import com.github.axescode.mybatis.MybatisConfig;
+import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -31,6 +34,28 @@ public class AxescodePlugin extends JavaPlugin {
                 new PlayerListener(),
                 new UIListener()
         );
+
+        CommandBuilder.register(this, "tc", builder -> {
+            builder.onExecute((player, args) -> {
+                player.sendMessage(Component.text("gd"));
+                return true;
+            });
+            builder.openNode("node1", node -> {
+                node.addRequirement(player -> player.getGameMode() == GameMode.CREATIVE);
+
+                node.onExecute((player, args) -> {
+                    player.sendMessage(Component.text("node1"));
+                    return true;
+                });
+            });
+            builder.openNode("node2", node -> {
+                node.addNode("n1", n1 -> {
+                    n1.addNode("n2", n2 -> {});
+                });
+            });
+            builder.openNode("node3", node -> {});
+            builder.openNode("node4", node -> {});
+        });
     }
 
     @Override
@@ -41,11 +66,6 @@ public class AxescodePlugin extends JavaPlugin {
 
     private void registerAllListeners(Listener... listeners) {
         Arrays.stream(listeners).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
-    }
-
-    public static void register(String command, CommandExecutor executor) {
-        PluginCommand pluginCommand = Objects.requireNonNull(plugin.getCommand(command));
-        pluginCommand.setExecutor(executor);
     }
 
     public static void info(Object msg) {

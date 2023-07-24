@@ -13,6 +13,8 @@ import lombok.Data;
 public class AuctionItemVO {
     private Long auctionItemId;
     private Long playerId;
+    private String auctionItemName;
+    private String auctionItemOriginName;
     private String auctionItem;
     private Long auctionItemPrice;
     private Integer auctionItemStock;

@@ -34,10 +34,7 @@ class AxesFront: JavaPlugin() {
             read()
         }
 
-        registerAll(
-            PlayerListener(),
-            ServerListener()
-        )
+        registerAll(PlayerListener(), ServerListener())
 
         register("showui", { player, _, _, args ->
             val tabs = Tabs(args)

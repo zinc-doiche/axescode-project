@@ -4,5 +4,6 @@ main: com.github.axescode.AxescodePlugin
 api-version: 1.19
 database: true
 commands:
-  job:
-    description: job
+  tc:
+    description: test command
+    usage: /tc

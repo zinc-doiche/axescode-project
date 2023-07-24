@@ -17,4 +17,11 @@ dependencies {
     compileOnly ("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly ("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly ("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }

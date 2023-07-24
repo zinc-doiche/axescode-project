@@ -5,7 +5,9 @@ import com.github.axescode.core.AbstractDAO;
 import com.github.axescode.mybatis.mapper.AuctionItemMapper;
 import com.github.axescode.util.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class AuctionItemDAO extends AbstractDAO<AuctionItemDAO> implements Transactional {
@@ -25,35 +27,52 @@ public class AuctionItemDAO extends AbstractDAO<AuctionItemDAO> implements Trans
     }
 
     public void save(AuctionItemVO auctionItemVO) {
-
+        mapper.insert(auctionItemVO);
     }
 
     public List<AuctionItemVO> findAll(String keyword) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("keyword", keyword);
+        return mapper.selectAll(data);
     }
 
     public List<AuctionItemVO> findAll(Long playerId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("playerId", playerId);
+        return mapper.selectAll(data);
     }
 
     public List<AuctionItemVO> findAllWithLimit(String keyword, int selectedPage, int sizePerPage) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("keyword", keyword);
+        data.put("start", ((selectedPage - 1) * sizePerPage + 1));
+        data.put("end", (selectedPage * sizePerPage));
+        return mapper.selectAll(data);
     }
 
     public List<AuctionItemVO> findAllWithLimit(Long playerId, int selectedPage, int sizePerPage) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("playerId", playerId);
+        data.put("start", ((selectedPage - 1) * sizePerPage + 1));
+        data.put("end", (selectedPage * sizePerPage));
+        return mapper.selectAll(data);
     }
 
     public List<AuctionItemVO> findAllWithLimit(Long playerId, String keyword, int selectedPage, int sizePerPage) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("playerId", playerId);
+        data.put("keyword", keyword);
+        data.put("start", ((selectedPage - 1) * sizePerPage + 1));
+        data.put("end", (selectedPage * sizePerPage));
+        return mapper.selectAll(data);
     }
 
     public void modify(AuctionItemVO auctionItemVO) {
-
+        mapper.modify(auctionItemVO);
     }
 
     public void remove(AuctionItemVO auctionItemVO) {
-
+        mapper.remove(auctionItemVO);
     }
 
     public static void use(Consumer<AuctionItemDAO> consumer) {
